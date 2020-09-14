@@ -144,9 +144,9 @@ namespace LibCraftopia.Item
             return this.WorkbenchId(id).WorkbenchLevel(level);
         }
 
-        public ItemBuilder PlayerCraftCount(float value)
+        public ItemBuilder PlayerCraftCount(int value)
         {
-            traverse.Field<float>("playerCraftCount").Value = value;
+            traverse.Field<int>("playerCraftCount").Value = value;
             return this;
         }
         public ItemBuilder CraftTimeCost(float value)
