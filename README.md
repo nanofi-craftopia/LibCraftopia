@@ -39,7 +39,7 @@ ItemBuilder.Inst.AddItems(item);
 ```csharp
 var displayName = LocalizationHelper.Inst.AddItemDisplayName(item.id);
 displayName.Languages[LocalizationHelper.Inst.EnglishIndex] = "Peach potion";
-displayName.Languages[LocalizationHelper.Inst.JapanseseIndex] = "ピーチポーション";
+displayName.Languages[LocalizationHelper.Inst.JapaneseIndex] = "ピーチポーション";
 displayName.Languages[LocalizationHelper.Inst.ChineseSimplifiedIndex] = "..."; // Sorry, i cannot write chinese
 displayName.Languages[LocalizationHelper.Inst.ChineseTraditionalIndex] = "...";
 ```
