@@ -303,8 +303,8 @@ namespace LibCraftopia.Item
                 if (i >= materials.Count) break;
                 var pair = materials[i];
                 var name = "material" + (char)((int)'A' + i);
-                traverse.Field<float>(name + "_Id").Value = pair.Item1;
-                traverse.Field<float>(name + "_count").Value = pair.Item2;
+                traverse.Field<int>(name + "_Id").Value = pair.Item1;
+                traverse.Field<int>(name + "_count").Value = pair.Item2;
 
             }
         }
