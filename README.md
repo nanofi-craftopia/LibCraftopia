@@ -14,7 +14,35 @@ Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.0/LibCraf
 ```
 # Usage
 
-See source code...
+#  Add an item
+
+```csharp
+var icon = ...; // Icon Sprite
+var familyId = ItemHelper.Inst.NewFamilyId();
+var item = ItemBuilder.Create()
+  .NewId()
+  .Icon(icon)
+  .Category(ItemCategory._28_Potion)
+  .FamilyId(familyId)
+  .ItemType(ItemType.Consumption)
+  .Workbench(20011, 1) 
+  .Material(1218, 1)
+  .CooldownTime(1)
+  .RestoreHealth(200)
+  .Handler(ItemHelper.Inst.PotionHandler)
+  .Build();
+ItemBuilder.Inst.AddItems(item);
+```
+
+#  the display name of the added item
+
+```csharp
+var displayName = LocalizationHelper.Inst.AddItemDisplayName(item.id);
+displayName.Languages[LocalizationHelper.Inst.EnglishIndex] = "Peach potion";
+displayName.Languages[LocalizationHelper.Inst.JapanseseIndex] = "ピーチポーション";
+displayName.Languages[LocalizationHelper.Inst.ChineseSimplifiedIndex] = "..."; // Sorry, i cannot write chinese
+displayName.Languages[LocalizationHelper.Inst.ChineseTraditionalIndex] = "...";
+```
 
 # Remark
 
