@@ -10,19 +10,11 @@ namespace LibCraftopia.Helper
     {
         protected override void OnUnityAwake()
         {
-            source = gameObject.AddComponent<LanguageSource>();
-            foreach (var language in LocalizationManager.GetAllLanguages())
-            {
-                var code = LocalizationManager.GetLanguageCode(language);
-                source.SourceData.AddLanguage(language, code);
-            }
-            EnglishIndex = source.SourceData.GetLanguageIndex(English);
-            JapaneseIndex = source.SourceData.GetLanguageIndex(Japanese);
-            ChineseSimplifiedIndex = source.SourceData.GetLanguageIndex(ChineseSimplified);
-            ChineseTraditionalIndex = source.SourceData.GetLanguageIndex(ChineseTraditional);
+            EnglishIndex = LocalizationManager.Sources[0].GetLanguageIndex(English);
+            JapaneseIndex = LocalizationManager.Sources[0].GetLanguageIndex(Japanese);
+            ChineseSimplifiedIndex = LocalizationManager.Sources[0].GetLanguageIndex(ChineseSimplified);
+            ChineseTraditionalIndex = LocalizationManager.Sources[0].GetLanguageIndex(ChineseTraditional);
         }
-
-        private LanguageSource source;
 
         public const string English = "English";
         public const string Japanese = "Japanese";
@@ -36,7 +28,7 @@ namespace LibCraftopia.Helper
 
         public TermData AddTerm(string term)
         {
-            return source.SourceData.AddTerm(term);
+            return LocalizationManager.Sources[0].AddTerm(term);
         }
         public TermData AddUI(string path)
         {
