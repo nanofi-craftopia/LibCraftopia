@@ -73,6 +73,11 @@ namespace LibCraftopia.Helper
 
         public void AddItems(params ItemData[] items)
         {
+            AddItems(items);
+        }
+
+        public void AddItems(IEnumerable<ItemData> items)
+        {
             var newAllItems = allItemsCache.Concat(items).ToArray();
             itemListTraverse.Field<ItemData[]>("all").Value = newAllItems;
             var validItems = items.Where(item => item.IsEnabled).ToArray();
@@ -85,7 +90,7 @@ namespace LibCraftopia.Helper
             // TODO: is it necessary to modify the OcItemDataMng._FilleDataList?
         }
 
-        private void addCraftableItems(params ItemData[] items)
+        private void addCraftableItems(IEnumerable<ItemData> items)
         {
             // See OcItemDataMng.SetupCraftableItems
             var craftableItems = itemDataMngTraverse.Field<Dictionary<int, List<ItemData>>>("craftableItems").Value;
@@ -106,7 +111,7 @@ namespace LibCraftopia.Helper
 
         }
 
-        private void addCraftBenchMap(params ItemData[] items)
+        private void addCraftBenchMap(IEnumerable<ItemData> items)
         {
             // See OcItemDataMng.SetupCraftBenchMap
             var craftBenchMap = itemDataMngTraverse.Field<Dictionary<int, List<ItemData>>>("craftBenchMap").Value;
@@ -138,7 +143,7 @@ namespace LibCraftopia.Helper
             }
         }
 
-        private void addFamilyMap(params ItemData[] items)
+        private void addFamilyMap(IEnumerable<ItemData> items)
         {
             // See OcItemDataMng.SetupFamilyMap
             var familyMap = itemDataMngTraverse.Field<Dictionary<int, List<ItemData>>>("familyMap").Value;
@@ -153,7 +158,7 @@ namespace LibCraftopia.Helper
             }
 
         }
-        private void addCategoryMap(params ItemData[] items)
+        private void addCategoryMap(IEnumerable<ItemData> items)
         {
             // See OcItemDataMng.SetupCategoryMap
             var categoryMap = itemDataMngTraverse.Field<Dictionary<int, List<ItemData>>>("categoryMap").Value;
