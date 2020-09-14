@@ -6,7 +6,7 @@ A  unofficial modding library for Craftopia (https://store.steampowered.com/app/
 This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. 
 
 
-Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.0/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.1/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
@@ -39,7 +39,7 @@ ItemBuilder.Inst.AddItems(item);
 ```csharp
 var displayName = LocalizationHelper.Inst.AddItemDisplayName(item.id);
 displayName.Languages[LocalizationHelper.Inst.EnglishIndex] = "Peach potion";
-displayName.Languages[LocalizationHelper.Inst.JapanseseIndex] = "ピーチポーション";
+displayName.Languages[LocalizationHelper.Inst.JapaneseIndex] = "ピーチポーション";
 displayName.Languages[LocalizationHelper.Inst.ChineseSimplifiedIndex] = "..."; // Sorry, i cannot write chinese
 displayName.Languages[LocalizationHelper.Inst.ChineseTraditionalIndex] = "...";
 ```
@@ -50,4 +50,5 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/15 v0.1.1 
 - 2020/09/13 v0.1.0
