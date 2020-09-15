@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using LibCraftopia.Enchant;
 using LibCraftopia.Helper;
 using LibCraftopia.Hook;
 using System;
@@ -13,11 +14,13 @@ namespace LibCraftopia
         {
             var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
             harmony.PatchAll(typeof(GlobalHook));
+            harmony.PatchAll(typeof(OcItemDropperPatch));
         }
 
 
         void Start()
         {
+            this.gameObject.AddComponent<EnchantHelper>();
             this.gameObject.AddComponent<ItemHelper>();
             this.gameObject.AddComponent<LocalizationHelper>();
         }

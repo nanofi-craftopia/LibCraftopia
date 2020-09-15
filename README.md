@@ -44,6 +44,22 @@ displayName.Languages[LocalizationHelper.Inst.ChineseSimplifiedIndex] = "..."; /
 displayName.Languages[LocalizationHelper.Inst.ChineseTraditionalIndex] = "...";
 ```
 
+#  Add an Enchant
+
+```csharp
+var enchant = LibCraftopia.Enchant.EnchantSetting.Create();
+enchant.NewId();
+enchant.Rarity(Oc.Item.EnchantRarity.Rare);
+enchant.LimitedCategoryId(EnchantSetting.LimitedCategory.Equipment);
+enchant.Effect(EnchantSetting.EffectName[0], 100);
+enchant.ProbInTreasureBox(new float[5] { 0, 0, 3, 3, 3});
+enchant.ProbInStoneDrop(0.8f);
+enchant.ProbInTreeDrop(0.8f);
+enchant.ProbInEnemyDrop(new int[] { 22, 23 }, new float[] { 0.5f, 0.1f });
+enchant.ProbInRandomDrop(0.3f);
+EnchantHelper.Inst.AddEnchant(enchant);
+```
+
 # Remark
 
 You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx. 
