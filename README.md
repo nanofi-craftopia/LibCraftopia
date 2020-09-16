@@ -31,7 +31,7 @@ var item = ItemBuilder.Create()
   .RestoreHealth(200)
   .Handler(ItemHelper.Inst.PotionHandler)
   .Build();
-ItemBuilder.Inst.AddItems(item);
+ItemHelper.Inst.AddItems(item);
 ```
 
 #  the display name of the added item
