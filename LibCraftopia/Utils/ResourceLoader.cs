@@ -7,10 +7,10 @@ using System.IO;
 //Depends on UnityEngine.ImageConversionModule
 namespace LibCraftopia.Utils
 {
-    static class ResourceLoader
+    public static class ResourceLoader
     {
 
-        static Sprite ReadSprite(string path)
+        public static Sprite ReadSprite(string path)
         {
             var png = ReadPng(path);
             return Sprite.Create(png, new Rect(0, 0, png.width, png.height), new Vector2(0, 1), 1);
@@ -50,6 +50,6 @@ namespace LibCraftopia.Utils
             return texture;
         }
 
-        
+
     }
 }
