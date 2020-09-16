@@ -8,13 +8,13 @@ namespace LibCraftopia.Hook
 {
     public class GlobalHook 
     {
-        public static event Action OnGameScreenSetUpFinished = delegate () { };
+        public static event Action OnGameScreenSetUpFinished;
 
         [HarmonyPatch(typeof(OcGameMng), "OnGameSceneSetUpFinish")]
         [HarmonyPostfix]
         public static void OcGameMng_OnGameSceneSetUpFinish()
         {
-            OnGameScreenSetUpFinished();
+            OnGameScreenSetUpFinished?.Invoke();
         }
     }
 }

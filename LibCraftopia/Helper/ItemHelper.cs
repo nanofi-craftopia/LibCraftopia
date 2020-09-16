@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LibCraftopia.Container;
 using Oc;
 using Oc.Item;
 using System;
@@ -16,20 +17,29 @@ namespace LibCraftopia.Helper
             itemDataMngTraverse = new Traverse(OcItemDataMng.Inst);
             itemList = itemDataMngTraverse.Field<SoItemDataList>("SoItemDataList").Value;
             itemListTraverse = new Traverse(itemList);
+            allItems = new CachedTraverse<ItemData[]>(itemListTraverse.Field("all"));
+            allItems.Changed += updateLastItemId;
+            familyList = itemDataMngTraverse.Field<SoItemFamilyList>("SoItemFamilyList").Value;
+            familyListTraverse = new Traverse(familyList);
+            allFamilies = new CachedTraverse<SoItemFamily[]>(familyListTraverse.Field("all"));
+            allFamilies.Changed += updateLastFamilyId;
+
             DefaultHandler = itemListTraverse.Field<ItemHandlerSO>("defaultHandler").Value;
             EquipHandler = itemListTraverse.Field<ItemHandlerSO>("equipHandler").Value;
             PotionHandler = itemListTraverse.Field<ItemHandlerSO>("potionHandler").Value;
             SkillHandler = itemListTraverse.Field<ItemHandlerSO>("skillHandler").Value;
             BreedSeedHandler = itemListTraverse.Field<ItemHandlerSO>("breedSeedHandler").Value;
             UseActHandler = itemListTraverse.Field<ItemHandlerSO>("useActHandler").Value;
-            cachedAllItems();
         }
 
         private Traverse itemDataMngTraverse;
         private SoItemDataList itemList;
         private Traverse itemListTraverse;
-        private ItemData[] allItemsCache = null;
+        private CachedTraverse<ItemData[]> allItems;
         private int lastId;
+        private SoItemFamilyList familyList;
+        private Traverse familyListTraverse;
+        private CachedTraverse<SoItemFamily[]> allFamilies;
         private int lastFamilyId;
 
         public ItemHandlerSO DefaultHandler { get; private set; }
@@ -39,54 +49,60 @@ namespace LibCraftopia.Helper
         public ItemHandlerSO BreedSeedHandler { get; private set; }
         public ItemHandlerSO UseActHandler { get; private set; }
 
-        private ItemData[] cachedAllItems()
+
+        private void updateLastItemId(CachedTraverse<ItemData[]> sender, ItemData[] oldValue, ItemData[] newValue)
         {
-            var all = new Traverse(itemList).Field<ItemData[]>("all").Value;
-            if (all != allItemsCache)
-            {
-                allItemsCache = all;
-                lastId = Math.Max(lastId, all.Select(item => item.Id).Max());
-                lastFamilyId = Math.Max(lastFamilyId, all.Select(item => item.FamilyId).Max());
-            }
-            return all;
+            lastId = Math.Max(lastId, newValue.Select(item => item.Id).Max());
+        }
+
+        private void updateLastFamilyId(CachedTraverse<SoItemFamily[]> sender, SoItemFamily[] oldValue, SoItemFamily[] newValue)
+        {
+            lastFamilyId = Math.Max(lastFamilyId, newValue.Select(item => item.FamilyId).Max());
         }
 
         public ItemData[] AllItems
         {
-            get { return cachedAllItems(); }
+            get { return allItems.Value; }
         }
         public ItemData[] ValidItems
         {
             get { return itemDataMngTraverse.Field<ItemData[]>("validItemDataList").Value; }
         }
+        public ItemData[] AppearIngameItems
+        {
+            get { return itemDataMngTraverse.Field<ItemData[]>("appearIngameItemDataList").Value; }
+        }
+        public SoItemFamily[] AllFamilies
+        {
+            get { return allFamilies.Value; }
+        }
 
         public int NewId()
         {
-            cachedAllItems();
+            allItems.Cache();
             return ++lastId;
-        }
-        public int NewFamilyId()
-        {
-            cachedAllItems();
-            return ++lastFamilyId;
         }
 
         public void AddItems(params ItemData[] items)
         {
-            AddItems(items);
+            AddItemsFromEnumerable(items);
         }
 
-        public void AddItems(IEnumerable<ItemData> items)
+        public void AddItemsFromEnumerable(IEnumerable<ItemData> items)
         {
-            var newAllItems = allItemsCache.Concat(items).ToArray();
-            itemListTraverse.Field<ItemData[]>("all").Value = newAllItems;
-            var validItems = items.Where(item => item.IsEnabled).ToArray();
+            var itemList = items.ToList();
+            var newAllItems = allItems.Value.Concat(itemList).ToArray();
+            allItems.Value = newAllItems;
+            var validItems = itemList.Where(item => item.IsEnabled);
             var validDataList = itemDataMngTraverse.Field<ItemData[]>("validItemDataList");
             validDataList.Value = validDataList.Value.Concat(validItems).ToArray();
-            addCraftableItems(validItems);
-            addCraftBenchMap(validItems);
-            addFamilyMap(validItems);
-            addCategoryMap(validItems);
+            var appearIngameItems = itemList.Where(item => item.IsAppearIngame);
+            var appearIngameDataList = itemDataMngTraverse.Field<ItemData[]>("appearIngameItemDataList");
+            appearIngameDataList.Value = appearIngameDataList.Value.Concat(appearIngameItems).ToArray();
+            addCraftableItems(appearIngameItems);
+            addCraftBenchMap(appearIngameItems);
+            addFamilyMap(appearIngameItems);
+            addCategoryMap(appearIngameItems);
             // TODO: is it necessary to modify the OcItemDataMng._FilleDataList?
         }
 
@@ -172,6 +188,22 @@ namespace LibCraftopia.Helper
                 categoryMap[categoryId].Add(item);
             }
 
+        }
+        public int NewFamilyId()
+        {
+            allFamilies.Cache();
+            return ++lastFamilyId;
+        }
+
+        public void AddItemFamilies(params SoItemFamily[] families)
+        {
+            AddItemFamiliesFromEnumerable(families);
+        }
+
+        public void AddItemFamiliesFromEnumerable(IEnumerable<SoItemFamily> families)
+        {
+            var newFamilies = allFamilies.Value.Concat(families).ToArray();
+            allFamilies.Value = newFamilies;
         }
     }
 }

@@ -37,6 +37,7 @@ namespace LibCraftopia.Item
         public ItemBuilder Id(int id)
         {
             traverse.Field<int>("id").Value = id;
+            traverse.Field<int>("pKey").Value = id;
             return this;
         }
         public ItemBuilder NewId()
