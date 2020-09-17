@@ -69,3 +69,6 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 - 2020/09/17 v0.1.2
 - 2020/09/17 v0.1.1 
 - 2020/09/13 v0.1.0
+
+# Acknowledgements
+- mituha : The chat command feature is inspired from https://github.com/mituha/CraftopiaPlugins/blob/main/ConsoleCommandsPlugin/ConsoleCommandPlugin.cs
