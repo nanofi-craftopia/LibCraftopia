@@ -8,7 +8,7 @@ using System;
 
 namespace LibCraftopia
 {
-    [BepInPlugin("com.craftopia.mod.LibCraftopia", "LibCraftopia", "0.1.2.0")]
+    [BepInPlugin("com.craftopia.mod.LibCraftopia", "LibCraftopia", "0.1.3.0")]
     public class LibCraftopia : BaseUnityPlugin
     {
         void Awake()
