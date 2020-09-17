@@ -60,6 +60,51 @@ enchant.ProbInRandomDrop(0.3f);
 EnchantHelper.Inst.AddEnchant(enchant);
 ```
 
+# Add a chat command
+
+```csharp
+ChatCommandManager.Inst.Commands.Add(new MyCommand());
+```
+where `MyCommand` class is implemented as
+```csharp
+        private class MyCommand : IChatCommandWithSubs
+        {
+            private class HelloCommand : IChatCommand
+            {
+                public string Command => "hello";
+                public void Invoke(string[] args)
+                {
+                    ChatCommandManager.Inst.PopMessage("Hello: {0}", args.Join());
+                }
+
+            }
+            public string Command => "mycommand";
+
+            public void Invoke(string[] args)
+            {
+                ChatCommandManager.Inst.PopMessage("Usage: mycommand (hello)");
+            }
+
+            public IChatCommand Subcommand(string command)
+            {
+                switch (command)
+                {
+                    case "hello": return new HelloCommand();
+                    default: return null; // MyCommand.Invoke will be called
+                }
+            }
+        }
+```
+
+In the game, entering `/mycommand` in the chat input will show
+```
+Usage: mycommand (hello)
+```
+Entering `/mycommand hello this is a test "this is a test"` will show
+```
+Hello: this, is, a, test, this is a test
+```
+
 # Remark
 
 You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx. 
@@ -69,3 +114,6 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 - 2020/09/17 v0.1.2
 - 2020/09/17 v0.1.1 
 - 2020/09/13 v0.1.0
+
+# Acknowledgements
+- mituha : The chat command feature is inspired from https://github.com/mituha/CraftopiaPlugins/blob/main/ConsoleCommandsPlugin/ConsoleCommandPlugin.cs
