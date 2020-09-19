@@ -37,8 +37,6 @@ private IEnumerator initGameCoroutine(bool needStabilization) {
 }
 ```
 
-so that it will be processed while showing the loading screen. 
-
 #  Add an item
 
 ```csharp
