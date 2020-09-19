@@ -26,6 +26,15 @@ void Start() {
 private IEnumerator initCoroutine(bool needStabilization) {
     // Do your initialization, e.g., add items and add enchants
     // Note that this is coroutine
+    
+    // Example
+    var task = Task.Run(() => {
+        // Do your initialization
+    });
+    while (!task.IsCompleted && !task.IsCanceled)
+    {
+        yield return needStabilization ? new WaitForSeconds(0.5f) : null;
+    }
 }
 
 private IEnumerator initGameCoroutine(bool needStabilization) {
