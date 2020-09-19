@@ -27,7 +27,7 @@ namespace LibCraftopia.Enchant
             {
                 HandleTree(ref item);
             }
-            else if (obj.StaticObjType == OcStaticObjType.Stone)
+            else if (obj.StaticObjType == OcStaticObjType.Stone || obj.StaticObjType == OcStaticObjType.BedRock)
             {
                 HandleStone(ref item);
             }
