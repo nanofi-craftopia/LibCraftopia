@@ -6,13 +6,38 @@ A  unofficial modding library for Craftopia (https://store.steampowered.com/app/
 This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. 
 
 
-Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.3/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.4/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
 [BepInDependency("com.craftopia.mod.LibCraftopia", BepInDependency.DependencyFlags.HardDependency)] // Add this!
 ```
 # Usage
+
+# Initialization
+
+You can add your initialization procedure as follows:
+```csharp
+void Start() {
+    LoadingManager.Inst.InitializeLoaders.Add(10, initCoroutine); // 10 is priority. Smaller coroutine will be called earlyer. 
+    LoadingManager.Inst.InitializeGameLoaders.Add(10, initGameCoroutine);
+}
+
+private IEnumerator initCoroutine(bool needStabilization) {
+    // Do your initialization, e.g., add items and add enchants
+    // Note that this is coroutine
+}
+
+private IEnumerator initGameCoroutine(bool needStabilization) {
+    // Do your initialization, e.g., add skills and add missions
+    // Some of the game contents, such as skill and mission, are destroyed when the game scene is destroyed (when going back to the title scene). 
+    // This means that if you want to modify these game contents, you need to modify them whenever the game scene is loaded.
+    // Coroutines added to `InitializeGameLoaders` will be called immediately after starting the game scene's loading. 
+    // Note that this is coroutine
+}
+```
+
+so that it will be processed while showing the loading screen. 
 
 #  Add an item
 
@@ -111,6 +136,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/19 v0.1.4 Add loading feature + Bug fix
 - 2020/09/18 v0.1.3 Add chat command feature
 - 2020/09/17 v0.1.2
 - 2020/09/17 v0.1.1 
