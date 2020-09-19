@@ -4,6 +4,7 @@ using LibCraftopia.Chat;
 using LibCraftopia.Enchant;
 using LibCraftopia.Helper;
 using LibCraftopia.Hook;
+using LibCraftopia.Loading;
 using System;
 
 namespace LibCraftopia
@@ -15,6 +16,7 @@ namespace LibCraftopia
         {
             var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
             harmony.PatchAll(typeof(GlobalHook));
+            harmony.PatchAll(typeof(LoadingPatch));
             harmony.PatchAll(typeof(OcItemDropperPatch));
             harmony.PatchAll(typeof(ChatCommandPatch));
             this.gameObject.AddComponent<Logger>().Init(Logger);
@@ -23,6 +25,7 @@ namespace LibCraftopia
 
         void Start()
         {
+            this.gameObject.AddComponent<LoadingManager>();
             this.gameObject.AddComponent<EnchantHelper>();
             this.gameObject.AddComponent<ItemHelper>();
             this.gameObject.AddComponent<LocalizationHelper>();

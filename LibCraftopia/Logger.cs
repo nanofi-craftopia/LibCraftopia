@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LibCraftopia.Chat
+namespace LibCraftopia
 {
     internal class Logger : SingletonMonoBehaviour<Logger>
     {
