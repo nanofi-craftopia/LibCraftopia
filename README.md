@@ -16,6 +16,8 @@ Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.4/LibCraf
 
 # Initialization
 
+**This feature has bugs currently. Due to timing of loading resources, we cannot access the skills and missions in coroutines added to the InitializeGameLoaders. **
+
 You can add your initialization procedure as follows:
 ```csharp
 void Start() {
