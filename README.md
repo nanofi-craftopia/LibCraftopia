@@ -6,7 +6,7 @@ A  unofficial modding library for Craftopia (https://store.steampowered.com/app/
 This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. 
 
 
-Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.4/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.5/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
@@ -15,8 +15,6 @@ Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.4/LibCraf
 # Usage
 
 # Initialization
-
-Caution: This feature has bugs currently. Due to timing of loading resources, we cannot access the skills and missions in coroutines added to the InitializeGameLoaders. 
 
 You can add your initialization procedure as follows:
 ```csharp
@@ -137,6 +135,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/21 v0.1.5 Fix bug in loading feature
 - 2020/09/19 v0.1.4 Add loading feature + Bug fix
 - 2020/09/18 v0.1.3 Add chat command feature
 - 2020/09/17 v0.1.2

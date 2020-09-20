@@ -1,8 +1,10 @@
-﻿using Oc;
+﻿using LibCraftopia.Hook;
+using Oc;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LibCraftopia.Loading
 {
@@ -11,8 +13,14 @@ namespace LibCraftopia.Loading
         public SortedList<int, Func<bool, IEnumerator>> InitializeLoaders { get; private set; } = new SortedList<int, Func<bool, IEnumerator>>();
         public SortedList<int, Func<bool, IEnumerator>> InitializeGameLoaders { get; private set; } = new SortedList<int, Func<bool, IEnumerator>>();
 
+
         private bool initialized = false;
         private bool initializedGame = false;
+
+        internal bool IsInitialized
+        {
+            get { return initialized && initializedGame; }
+        }
 
         protected override void OnUnityAwake()
         {
