@@ -5,11 +5,13 @@ using LibCraftopia.Enchant;
 using LibCraftopia.Helper;
 using LibCraftopia.Hook;
 using LibCraftopia.Loading;
+using LibCraftopia.Registry;
 using System;
+using System.Reflection;
 
 namespace LibCraftopia
 {
-    [BepInPlugin("com.craftopia.mod.LibCraftopia", "LibCraftopia", "0.1.3.0")]
+    [BepInPlugin("com.craftopia.mod.LibCraftopia", "LibCraftopia", ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch + "." + ThisAssembly.Git.Commits)]
     public class LibCraftopia : BaseUnityPlugin
     {
         void Awake()
@@ -25,6 +27,7 @@ namespace LibCraftopia
 
         void Start()
         {
+            this.gameObject.AddComponent<RegistryManager>();
             this.gameObject.AddComponent<LoadingManager>();
             this.gameObject.AddComponent<EnchantHelper>();
             this.gameObject.AddComponent<ItemHelper>();

@@ -19,3 +19,4 @@ To build this library, you need to place the following dlls on the `Libs` direct
 - UnityEngine.ImageConversionModule.dll
 - UnityEngine.UI.dll
 
+We use [GitInfo](https://www.nuget.org/packages/GitInfo/) for automatically configuring the assembly version and mod version from the git tag and commit history. 

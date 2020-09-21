@@ -1,12 +1,15 @@
 # LibCraftopia
 A  unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
 
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nanofi/LibCraftopia?include_prereleases)
+![GitHub](https://img.shields.io/github/license/nanofi/LibCraftopia)
+
 # Setup
 
-This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. 
+This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. Also, follow the tutorial of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/dev_guide/plugin_tutorial/index.html, to create your BepInEx mod.
 
 
-Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.5/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download the dll from the above release badge and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
@@ -37,6 +40,8 @@ private IEnumerator initGameCoroutine(bool needStabilization) {
     // Note that this is coroutine
 }
 ```
+
+Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be called during the loading scene. By appropriate implementation of the corroutines, we can avoid freezing the game application. The difference between `InitializeLoaders` and `InitializeGameLoaders` is that while coroutines added to `InitializeLoaders` will be called once the game scene is loaded, coroutines added to `InitializeGameLoaders` will be called each time the game scene is loaded. For example, when we go back to the title scene and start the game again, coroutines in `InitializeLoaders` are not called, whereas that in `InitializeGameLoaders` are called.
 
 #  Add an item
 
