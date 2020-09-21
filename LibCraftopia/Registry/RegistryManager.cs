@@ -31,6 +31,8 @@ namespace LibCraftopia.Registry
                 {
                     yield return new WaitForSeconds(0.1f);
                 }
+                var enumerator = registry.Init();
+                while (enumerator.MoveNext()) yield return enumerator.Current;
             }
             initialized = true;
             yield break;

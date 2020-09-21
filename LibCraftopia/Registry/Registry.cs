@@ -13,6 +13,8 @@ namespace LibCraftopia.Registry
     public interface IRegistry
     {
         bool IsGameDependent { get; }
+
+        IEnumerator Init();
         IEnumerator Apply();
 
         Task Load(string baseDir);
@@ -80,6 +82,11 @@ namespace LibCraftopia.Registry
         private int findNewId()
         {
             return currentId++;
+        }
+
+        public IEnumerator Init()
+        {
+            yield break;
         }
 
         public IEnumerator Apply()
