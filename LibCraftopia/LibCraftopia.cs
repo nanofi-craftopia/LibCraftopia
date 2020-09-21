@@ -27,8 +27,8 @@ namespace LibCraftopia
 
         void Start()
         {
-            this.gameObject.AddComponent<RegistryManager>();
             this.gameObject.AddComponent<LoadingManager>();
+            this.gameObject.AddComponent<RegistryManager>();
             this.gameObject.AddComponent<EnchantHelper>();
             this.gameObject.AddComponent<ItemHelper>();
             this.gameObject.AddComponent<LocalizationHelper>();

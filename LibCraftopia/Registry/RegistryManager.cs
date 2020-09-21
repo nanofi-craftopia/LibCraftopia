@@ -101,8 +101,7 @@ namespace LibCraftopia.Registry
                 throw new Exception("We cannot access to registries before initialization. This method can be accessed from coroutines added to `LoadingManager.Inst.InitializeLoaders` with a priority grater than 5 or coroutines added to `LoadingManager.Inst.InitializeGameLoaders`.");
             }
             var key = typeof(T);
-            IRegistry registry;
-            if (registries.TryGetValue(key, out registry))
+            if (registries.TryGetValue(key, out var registry))
             {
                 return (Registry<T>)registry;
             }

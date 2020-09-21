@@ -26,6 +26,7 @@ namespace LibCraftopia.Loading
         [HarmonyPostfix]
         static IEnumerator PostfixIELoadScenesAsync(IEnumerator original, bool needsStabilization, string ____nextSceneName)
         {
+            Logger.Inst.LogInfo("Next scene name: {0}", ____nextSceneName);
             while (original.MoveNext())
             {
                 yield return original.Current;

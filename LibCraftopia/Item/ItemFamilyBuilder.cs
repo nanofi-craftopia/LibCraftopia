@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace LibCraftopia.Item
 {
+    [Obsolete]
     public class ItemFamilyBuilder
     {
         private readonly SoItemFamily family = ScriptableObject.CreateInstance<SoItemFamily>();
@@ -33,7 +34,8 @@ namespace LibCraftopia.Item
         {
             return Id(ItemHelper.Inst.NewFamilyId());
         }
-        public ItemFamilyBuilder NewId(out int id) {
+        public ItemFamilyBuilder NewId(out int id)
+        {
             var builder = NewId();
             id = builder.family.FamilyId;
             return builder;

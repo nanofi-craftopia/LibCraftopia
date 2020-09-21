@@ -37,6 +37,7 @@ namespace LibCraftopia.Registry
         {
             Name = name;
             this.handler = handler;
+            currentId = handler.MinId;
         }
 
         public void Register(string key, T value)
@@ -53,6 +54,7 @@ namespace LibCraftopia.Registry
             }
             value.Id = id;
             elements.Add(key, value);
+            Logger.Inst.LogInfo("Register({0}): register a new element. \"{1}\" \"{2}\"", Name, key, id);
             handler.OnRegister(key, id, value);
         }
 
@@ -62,9 +64,20 @@ namespace LibCraftopia.Registry
             {
                 throw new ArgumentException("The key already exists", "key");
             }
-            keyIdDict.Add(key, value.Id);
+            string savedKey;
+            if (keyIdDict.TryGetLeft(value.Id, out savedKey))
+            {
+                if (key != savedKey)
+                {
+                    Logger.Inst.LogError("Register({0}): try to register id={1} with key={2}, but the id already exists with different key {3}", Name, value.Id, key, savedKey);
+                }
+            }
+            else
+            {
+                keyIdDict.Add(key, value.Id);
+            }
             elements.Add(key, value);
-            handler.OnRegister(key, value.Id, value);
+            currentId = Math.Max(currentId, value.Id + 1);
         }
 
         public bool Unregister(string key)
@@ -81,17 +94,28 @@ namespace LibCraftopia.Registry
 
         private int findNewId()
         {
-            return currentId++;
+            var newId = currentId++;
+            if (newId >= MaxId)
+            {
+                throw new InvalidOperationException(string.Format("Register({0}): id runs out.", Name));
+            }
+            return newId;
         }
 
         public IEnumerator Init()
         {
-            yield break;
+            Logger.Inst.LogInfo("Register({0}): initialize start.");
+            var enumerator = handler.Init(this);
+            while (enumerator.MoveNext()) yield return enumerator.Current;
+            Logger.Inst.LogInfo("Register({0}): initialize end.");
         }
 
         public IEnumerator Apply()
         {
-            return handler.Apply(elements.Values);
+            Logger.Inst.LogInfo("Register({0}): applying to the game starts.");
+            var enumerator = handler.Apply(elements.Values);
+            while (enumerator.MoveNext()) yield return enumerator.Current;
+            Logger.Inst.LogInfo("Register({0}): applying to the game ends.");
         }
 
         private string Filename
@@ -117,6 +141,11 @@ namespace LibCraftopia.Registry
                         int id = reader.ReadInt32();
                         keyIdDict.Add(key, id);
                     }
+                }
+                if (currentId < MinId)
+                {
+                    Logger.Inst.LogWarning("Register({0}): The saved current id ({1}) conflicts the min id ({2}). Set the min id to current id.", Name, currentId, MinId);
+                    currentId = MinId;
                 }
             });
         }

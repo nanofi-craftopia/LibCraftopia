@@ -13,6 +13,7 @@ namespace LibCraftopia.Registry
 
         void OnRegister(string key, int id, T value);
         void OnUnregister(string key, int id);
+        IEnumerator Init(Registry<T> registry);
         IEnumerator Apply(ICollection<T> elements);
     }
 }
