@@ -1,4 +1,5 @@
 ﻿using LibCraftopia.Container;
+using LibCraftopia.Utils;
 using Oc.Em;
 using System;
 using System.Collections;
@@ -161,16 +162,7 @@ namespace LibCraftopia.Registry
                     Logger.Inst.LogWarning($"Register({Name}): The saved current id ({currentId}) conflicts the min id ({MinId}). Set the min id to current id.");
                     currentId = MinId;
                 }
-            }).ContinueWith(task =>
-            {
-                if (task.Exception != null)
-                {
-                    var e = task.Exception;
-                    Logger.Inst.LogError(e);
-                    Logger.Inst.LogError(e.Message);
-                    Logger.Inst.LogError(e.StackTrace);
-                }
-            });
+            }).LogError();
         }
 
         public Task Save(string baseDir)
@@ -188,16 +180,7 @@ namespace LibCraftopia.Registry
                         writer.Write(item.Value);
                     }
                 }
-            }).ContinueWith(task =>
-            {
-                if (task.Exception != null)
-                {
-                    var e = task.Exception;
-                    Logger.Inst.LogError(e);
-                    Logger.Inst.LogError(e.Message);
-                    Logger.Inst.LogError(e.StackTrace);
-                }
-            });
+            }).LogError();
         }
     }
 }

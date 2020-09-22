@@ -29,8 +29,8 @@ namespace LibCraftopia.Item
                 var all = elements.Select(e => (SoItemFamily)e).ToArray();
                 var itemManager = OcItemDataMng.Inst;
                 var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
-                AccessTools.FieldRefAccess<SoItemFamilyList, SoItemFamily[]>(familyList, "all") = all;
-            });
+                AccessTools.FieldRefAccess<SoDataList<SoItemFamilyList, SoItemFamily>, SoItemFamily[]>(familyList, "all") = all;
+            }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
             {
                 yield return new WaitForSeconds(0.1f);
@@ -46,9 +46,17 @@ namespace LibCraftopia.Item
                 foreach (var family in familyList.GetAll())
                 {
                     var key = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.English)?.ToValidKey() ?? family.FamilyId.ToString();
+                    // DisplayName conflicts
+                    if (key == "OneHandedSword" || key == "TwoHandedWeapon" || key == "Leftover" || key.IsNullOrEmpty())
+                    {
+                        var jpName = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.Japanese);
+                        Logger.Inst.LogWarning($"Confliction: {family.FamilyId}, {key}, {jpName}");
+                        key += family.FamilyId.ToString();
+                    }
+                    // 
                     registry.RegisterVanilla(key, family);
                 }
-            });
+            }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
             {
                 yield return new WaitForSeconds(0.1f);
