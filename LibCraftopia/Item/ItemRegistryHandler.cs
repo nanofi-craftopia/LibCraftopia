@@ -33,7 +33,7 @@ namespace LibCraftopia.Item
                 var appear = valid.Where(e => e.IsAppearIngame).ToArray();
                 var itemManager = OcItemDataMng.Inst;
                 var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
-                AccessTools.FieldRefAccess<SoItemDataList, ItemData[]>(itemList, "all") = all;
+                AccessTools.FieldRefAccess<SoDataList<SoItemDataList, ItemData>, ItemData[]>(itemList, "all") = all;
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "validItemDataList") = valid;
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "appearIngameItemDataList") = appear;
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCraftableItems").Invoke(itemManager, new object[] { });
@@ -42,7 +42,7 @@ namespace LibCraftopia.Item
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
                 var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = appear;
-            });
+            }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
             {
                 yield return new WaitForSeconds(0.1f);
@@ -59,14 +59,24 @@ namespace LibCraftopia.Item
                 {
                     var key = item.IsEnabled ? LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey() ?? item.Id.ToString() : item.Id.ToString();
                     // DisplayName conflicts
-                    if (key == "HeadEquipmentUnique")
+                    if (key == "HeadEquipmentUnique" || key == "HorizontalWall" || key == "A" || key == "B" || key == "C" || key == "SF" || key.IsNullOrEmpty())
                     {
-                        key = item.Id.ToString();
+                        key += item.Id.ToString();
                     }
                     // 
-                    registry.RegisterVanilla(key, item);
+                    try
+                    {
+                        registry.RegisterVanilla(key, item);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Inst.LogError(e);
+                        Logger.Inst.LogError(e.Message);
+                        Logger.Inst.LogError(e.StackTrace);
+                    }
+
                 }
-            });
+            }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
             {
                 yield return new WaitForSeconds(0.1f);

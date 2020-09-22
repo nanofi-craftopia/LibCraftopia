@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LibCraftopia.Utils
 {
@@ -34,6 +35,18 @@ namespace LibCraftopia.Utils
                 .Replace(@" ", string.Empty);
         }
 
-
+        internal static Task LogError(this Task self)
+        {
+            return self.ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    var e = task.Exception;
+                    Logger.Inst.LogError(e);
+                    Logger.Inst.LogError(e.Message);
+                    Logger.Inst.LogError(e.StackTrace);
+                }
+            });
+        }
     }
 }
