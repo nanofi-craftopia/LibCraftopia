@@ -82,7 +82,7 @@ namespace LibCraftopia.Registry
             {
                 if (key != savedKey)
                 {
-                    Logger.Inst.LogError($"Register({Name}): try to register id={value.Id} with key={key}, but the id already exists with different key {savedKey}");
+                    Logger.Inst.LogWarning($"Register({Name}): try to register id={value.Id} with key={key}, but the id already exists with different key {savedKey}");
                     keyIdDict.RemoveRight(value.Id);
                     keyIdDict.Add(key, value.Id);
                 }
