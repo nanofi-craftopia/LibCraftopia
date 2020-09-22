@@ -16,7 +16,7 @@ namespace LibCraftopia.Chat
         [HarmonyPrefix]
         static bool PrefixTrySendMessage(OcUI_ChatHandler __instance, string message)
         {
-            Logger.Inst.LogInfo("TrySendMessage called: {0}", message);
+            Logger.Inst.LogInfo($"TrySendMessage called: {message}");
             message = message?.Trim();
             if (message.IsNullOrEmpty())
                 return true;

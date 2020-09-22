@@ -20,13 +20,12 @@ namespace LibCraftopia.Loading
     {
         private static bool isUIInventoryStarted = false;
 
-        private static List<Action> startedManagers = new List<Action>();
+        private static Queue<Action> startedManagers = new Queue<Action>();
 
         [HarmonyPatch(typeof(OcGameSceneTransformManager), "IELoadScenesAsync")]
         [HarmonyPostfix]
         static IEnumerator PostfixIELoadScenesAsync(IEnumerator original, bool needsStabilization, string ____nextSceneName)
         {
-            Logger.Inst.LogInfo("Next scene name: {0}", ____nextSceneName);
             while (original.MoveNext())
             {
                 yield return original.Current;
@@ -36,19 +35,22 @@ namespace LibCraftopia.Loading
                     break;
                 }
             }
-            Logger.Inst.LogInfo("Mods' loading procedures start");
-            var loaders = LoadingManager.Inst.OnLoadScene(needsStabilization);
-            while (loaders.MoveNext())
+            if (____nextSceneName != "OcScene_Home")
             {
-                yield return loaders.Current;
+                Logger.Inst.LogInfo("Mods' loading procedures start");
+                var loaders = LoadingManager.Inst.OnLoadScene(needsStabilization);
+                while (loaders.MoveNext())
+                {
+                    yield return loaders.Current;
+                }
+                Logger.Inst.LogInfo("Mods' loading procedures end");
             }
-            Logger.Inst.LogInfo("Mods' loading procedures end");
-            foreach (var callback in startedManagers)
+            yield return new WaitForEndOfFrame();
+            while (startedManagers.Count > 0)
             {
-                callback();
-                yield return null;
+                startedManagers.Dequeue()();
+                yield return new WaitForEndOfFrame();
             }
-            startedManagers.Clear();
             while (original.MoveNext())
             {
                 yield return original.Current;
@@ -79,7 +81,7 @@ namespace LibCraftopia.Loading
         static bool PrefixUIInventoryMngStart()
         {
             Logger.Inst.LogInfo("OcItemUI_InventoryMng.Start");
-            startedManagers.Add(() =>
+            startedManagers.Enqueue(() =>
             {
                 Logger.Inst.LogInfo("Load inventory and player data start");
                 UIInventoryMngStart(OcItemUI_InventoryMng.Inst);
@@ -118,7 +120,7 @@ namespace LibCraftopia.Loading
         static bool PrefixSkillManagerStart()
         {
             Logger.Inst.LogInfo("OcSkillManager.Start");
-            startedManagers.Add(() =>
+            startedManagers.Enqueue(() =>
             {
                 Logger.Inst.LogInfo("Load skill start");
                 SkillManagerStart(OcSkillManager.Inst);
@@ -147,7 +149,7 @@ namespace LibCraftopia.Loading
         static bool PrefixMissionManagerStart()
         {
             Logger.Inst.LogInfo("OcMissionManager.Start");
-            startedManagers.Add(() =>
+            startedManagers.Enqueue(() =>
             {
                 Logger.Inst.LogInfo("Load mission start");
                 MissionManagerStart(OcMissionManager.Inst);
@@ -168,7 +170,7 @@ namespace LibCraftopia.Loading
         static bool PrefixUIHUDMissionStart()
         {
             Logger.Inst.LogInfo("OcUI_HUDMissionSheetHandler.Start");
-            startedManagers.Add(() =>
+            startedManagers.Enqueue(() =>
             {
                 Logger.Inst.LogInfo("Load HUD mission start");
                 UIHUDMissionStart(OcUI_HUDMissionSheetHandler.Inst);
@@ -195,7 +197,7 @@ namespace LibCraftopia.Loading
         static bool PrefixStatisticalManagerStart()
         {
             Logger.Inst.LogInfo("StatisticalDataManager.Start");
-            startedManagers.Add(() =>
+            startedManagers.Enqueue(() =>
             {
                 Logger.Inst.LogInfo("Load statistical data start");
                 StatisticalManagerStart(StatisticalDataManager.Inst);

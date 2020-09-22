@@ -17,7 +17,7 @@ namespace LibCraftopia.Registry
 
         protected override void OnUnityAwake()
         {
-            LoadingManager.Inst.InitializeLoaders.Add(5, initialize);
+            LoadingManager.Inst.InitializeLoaders.Add(20, initialize);
             LoadingManager.Inst.InitializeLoaders.Add(99999, apply);
             LoadingManager.Inst.InitializeGameLoaders.Add(99999, applyGame);
         }
@@ -46,6 +46,7 @@ namespace LibCraftopia.Registry
                 {
                     var enumerator = registry.Apply();
                     while (enumerator.MoveNext()) yield return enumerator.Current;
+                    Directory.CreateDirectory(baseDir);
                     var task = registry.Save(baseDir);
                     while (!task.IsCompleted && !task.IsCanceled)
                     {
@@ -81,7 +82,7 @@ namespace LibCraftopia.Registry
         {
             if (initialized)
             {
-                throw new Exception("A registry must be created before initialization. Add a registry in a coroutine added to `LoadingManager.Inst.InitializeLoaders` with a priority less than 5.");
+                throw new Exception("A registry must be created before initialization. Add a registry in a coroutine added to `LoadingManager.Inst.InitializeLoaders` with a priority less than 20.");
             }
             var key = typeof(T);
             if (registries.ContainsKey(key))
@@ -98,7 +99,7 @@ namespace LibCraftopia.Registry
         {
             if (!initialized)
             {
-                throw new Exception("We cannot access to registries before initialization. This method can be accessed from coroutines added to `LoadingManager.Inst.InitializeLoaders` with a priority grater than 5 or coroutines added to `LoadingManager.Inst.InitializeGameLoaders`.");
+                throw new Exception("We cannot access to registries before initialization. This method can be accessed from coroutines added to `LoadingManager.Inst.InitializeLoaders` with a priority grater than 20 or coroutines added to `LoadingManager.Inst.InitializeGameLoaders`.");
             }
             var key = typeof(T);
             if (registries.TryGetValue(key, out var registry))

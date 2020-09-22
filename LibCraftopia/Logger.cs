@@ -18,34 +18,34 @@ namespace LibCraftopia
             this.logger = logger;
         }
 
-        internal void Log(LogLevel level, string format, params object[] args)
+        internal void Log(LogLevel level, object data)
         {
-            logger.Log(level, string.Format(format, args));
+            logger.Log(level, data);
         }
 
-        internal void LogInfo(string format, params object[] args)
+        internal void LogInfo(object data)
         {
-            Log(LogLevel.Info, format, args);
+            Log(LogLevel.Info, data);
         }
-        internal void LogDebug(string format, params object[] args)
+        internal void LogDebug(object data)
         {
-            Log(LogLevel.Debug, format, args);
+            Log(LogLevel.Debug, data);
         }
-        internal void LogError(string format, params object[] args)
+        internal void LogError(object data)
         {
-            Log(LogLevel.Error, format, args);
+            Log(LogLevel.Error, data);
         }
-        internal void LogFatal(string format, params object[] args)
+        internal void LogFatal(object data)
         {
-            Log(LogLevel.Fatal, format, args);
+            Log(LogLevel.Fatal, data);
         }
-        internal void LogMessage(string format, params object[] args)
+        internal void LogMessage(object data)
         {
-            Log(LogLevel.Message, format, args);
+            Log(LogLevel.Message, data);
         }
-        internal void LogWarning(string format, params object[] args)
+        internal void LogWarning(object data)
         {
-            Log(LogLevel.Warning, format, args);
+            Log(LogLevel.Warning, data);
         }
     }
 }

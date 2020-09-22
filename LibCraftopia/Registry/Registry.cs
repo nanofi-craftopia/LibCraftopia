@@ -1,4 +1,5 @@
 ﻿using LibCraftopia.Container;
+using Oc.Em;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,15 +24,17 @@ namespace LibCraftopia.Registry
 
     public class Registry<T> : IRegistry where T : IRegistryEntry
     {
+        private readonly IRegistryHandler<T> handler;
         private BidirectionalDictionary<string, int> keyIdDict = new BidirectionalDictionary<string, int>();
         private Dictionary<string, T> elements = new Dictionary<string, T>();
-        private readonly IRegistryHandler<T> handler;
         private int currentId;
 
         public string Name { get; private set; }
-        public int MinId { get => handler.MaxId; }
-        public int MaxId { get => handler.MinId; }
+        public int MinId { get => handler.MinId; }
+        public int MaxId { get => handler.MaxId; }
         public bool IsGameDependent { get => handler.IsGameDependent; }
+
+        public ICollection<T> Elements { get => elements.Values; }
 
         internal Registry(string name, IRegistryHandler<T> handler)
         {
@@ -54,22 +57,33 @@ namespace LibCraftopia.Registry
             }
             value.Id = id;
             elements.Add(key, value);
-            Logger.Inst.LogInfo("Register({0}): register a new element. \"{1}\" \"{2}\"", Name, key, id);
+            Logger.Inst.LogInfo($"Register({Name}): register a new element. \"{key}\" \"{id}\"");
             handler.OnRegister(key, id, value);
+        }
+
+        public bool ExistsKey(string key)
+        {
+            return elements.ContainsKey(key);
+        }
+
+        public T GetElement(string key)
+        {
+            return elements[key];
         }
 
         internal void RegisterVanilla(string key, T value)
         {
             if (elements.ContainsKey(key))
             {
-                throw new ArgumentException("The key already exists", "key");
+                throw new ArgumentException($"The key, {key}, already exists.", "key");
             }
-            string savedKey;
-            if (keyIdDict.TryGetLeft(value.Id, out savedKey))
+            if (keyIdDict.TryGetLeft(value.Id, out var savedKey))
             {
                 if (key != savedKey)
                 {
-                    Logger.Inst.LogError("Register({0}): try to register id={1} with key={2}, but the id already exists with different key {3}", Name, value.Id, key, savedKey);
+                    Logger.Inst.LogError($"Register({Name}): try to register id={value.Id} with key={key}, but the id already exists with different key {savedKey}");
+                    keyIdDict.RemoveRight(value.Id);
+                    keyIdDict.Add(key, value.Id);
                 }
             }
             else
@@ -97,25 +111,25 @@ namespace LibCraftopia.Registry
             var newId = currentId++;
             if (newId >= MaxId)
             {
-                throw new InvalidOperationException(string.Format("Register({0}): id runs out.", Name));
+                throw new InvalidOperationException($"Register({Name}): id runs out. New id {newId} v.s. Max id {MaxId}.");
             }
             return newId;
         }
 
         public IEnumerator Init()
         {
-            Logger.Inst.LogInfo("Register({0}): initialize start.");
+            Logger.Inst.LogInfo($"Register({Name}): initialize start.");
             var enumerator = handler.Init(this);
             while (enumerator.MoveNext()) yield return enumerator.Current;
-            Logger.Inst.LogInfo("Register({0}): initialize end.");
+            Logger.Inst.LogInfo($"Register({Name}): initialize end.");
         }
 
         public IEnumerator Apply()
         {
-            Logger.Inst.LogInfo("Register({0}): applying to the game starts.");
+            Logger.Inst.LogInfo($"Register({Name}): applying to the game starts.");
             var enumerator = handler.Apply(elements.Values);
             while (enumerator.MoveNext()) yield return enumerator.Current;
-            Logger.Inst.LogInfo("Register({0}): applying to the game ends.");
+            Logger.Inst.LogInfo($"Register({Name}): applying to the game ends.");
         }
 
         private string Filename
@@ -144,8 +158,17 @@ namespace LibCraftopia.Registry
                 }
                 if (currentId < MinId)
                 {
-                    Logger.Inst.LogWarning("Register({0}): The saved current id ({1}) conflicts the min id ({2}). Set the min id to current id.", Name, currentId, MinId);
+                    Logger.Inst.LogWarning($"Register({Name}): The saved current id ({currentId}) conflicts the min id ({MinId}). Set the min id to current id.");
                     currentId = MinId;
+                }
+            }).ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    var e = task.Exception;
+                    Logger.Inst.LogError(e);
+                    Logger.Inst.LogError(e.Message);
+                    Logger.Inst.LogError(e.StackTrace);
                 }
             });
         }
@@ -164,6 +187,15 @@ namespace LibCraftopia.Registry
                         writer.Write(item.Key);
                         writer.Write(item.Value);
                     }
+                }
+            }).ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    var e = task.Exception;
+                    Logger.Inst.LogError(e);
+                    Logger.Inst.LogError(e.Message);
+                    Logger.Inst.LogError(e.StackTrace);
                 }
             });
         }

@@ -4,9 +4,11 @@ using LibCraftopia.Chat;
 using LibCraftopia.Enchant;
 using LibCraftopia.Helper;
 using LibCraftopia.Hook;
+using LibCraftopia.Item;
 using LibCraftopia.Loading;
 using LibCraftopia.Registry;
 using System;
+using System.Collections;
 using System.Reflection;
 
 namespace LibCraftopia
@@ -33,7 +35,15 @@ namespace LibCraftopia
             this.gameObject.AddComponent<ItemHelper>();
             this.gameObject.AddComponent<LocalizationHelper>();
             this.gameObject.AddComponent<ChatCommandManager>();
+
+            LoadingManager.Inst.InitializeLoaders.Add(0, setupRegistries);
         }
 
+        private IEnumerator setupRegistries(bool needStabilization)
+        {
+            RegistryManager.Inst.CreateRegistry(new ItemFamilyRegistryHandler());
+            RegistryManager.Inst.CreateRegistry(new ItemRegistryHandler());
+            yield return null;
+        }
     }
 }
