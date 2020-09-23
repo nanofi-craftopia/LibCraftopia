@@ -60,34 +60,41 @@ namespace LibCraftopia.Helper
             lastFamilyId = Math.Max(lastFamilyId, newValue.Select(item => item.FamilyId).Max());
         }
 
+        [Obsolete]
         public ItemData[] AllItems
         {
             get { return allItems.Value; }
         }
+        [Obsolete]
         public ItemData[] ValidItems
         {
             get { return itemDataMngTraverse.Field<ItemData[]>("validItemDataList").Value; }
         }
+        [Obsolete]
         public ItemData[] AppearIngameItems
         {
             get { return itemDataMngTraverse.Field<ItemData[]>("appearIngameItemDataList").Value; }
         }
+        [Obsolete]
         public SoItemFamily[] AllFamilies
         {
             get { return allFamilies.Value; }
         }
 
+        [Obsolete]
         public int NewId()
         {
             allItems.Cache();
             return ++lastId;
         }
 
+        [Obsolete]
         public void AddItems(params ItemData[] items)
         {
             AddItemsFromEnumerable(items);
         }
 
+        [Obsolete]
         public void AddItemsFromEnumerable(IEnumerable<ItemData> items)
         {
             var itemList = items.ToList();
@@ -189,17 +196,20 @@ namespace LibCraftopia.Helper
             }
 
         }
+        [Obsolete]
         public int NewFamilyId()
         {
             allFamilies.Cache();
             return ++lastFamilyId;
         }
 
+        [Obsolete]
         public void AddItemFamilies(params SoItemFamily[] families)
         {
             AddItemFamiliesFromEnumerable(families);
         }
 
+        [Obsolete]
         public void AddItemFamiliesFromEnumerable(IEnumerable<SoItemFamily> families)
         {
             var newFamilies = allFamilies.Value.Concat(families).ToArray();

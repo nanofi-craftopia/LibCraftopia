@@ -1,12 +1,15 @@
 # LibCraftopia
-A  unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
+An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
+
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nanofi/LibCraftopia?include_prereleases)
+![GitHub](https://img.shields.io/github/license/nanofi/LibCraftopia)
 
 # Setup
 
-This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. 
+This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. Also, follow the tutorial of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/dev_guide/plugin_tutorial/index.html, to create your BepInEx mod.
 
 
-Download https://github.com/nanofi/LibCraftopia/releases/download/v0.1.5/LibCraftopia.dll and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download the dll from the above release badge and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
@@ -38,30 +41,71 @@ private IEnumerator initGameCoroutine(bool needStabilization) {
 }
 ```
 
+Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be called during the loading scene. By appropriate implementation of the corroutines, we can avoid freezing the game application. The difference between `InitializeLoaders` and `InitializeGameLoaders` is that while coroutines added to `InitializeLoaders` will be called once the game scene is loaded, coroutines added to `InitializeGameLoaders` will be called each time the game scene is loaded. For example, when we go back to the title scene and start the game again, coroutines in `InitializeLoaders` are not called, whereas that in `InitializeGameLoaders` are called.
+
+# Registry
+
+A registry is a manager for game element, such as item, enchant, skill, enemy, and so on (currently, the item and enchant APIs are provided), by which we can keep the consistency of the added game elements' ids against update of the official game and mods. When adding a game element via the registry, you must specify a unique string as the game element's unique key instead of specifying the game element's id. The registry assigns unused id to the game element automatically and remembers the correspondences between the string and id. 
+
+Accesses of the registry APIs must be done in coroutines added to the `InitializeLoaders` with priority grater than 20. What you should do first to access the registry APIs is obtaining a registry via `RegistryManager.GetRegistry<T>()`. For example, you can obtain an item registry as
+```csharp
+void Start() {
+    LoadingManager.Inst.InitializeLoaders.Add(50, initCoroutine);
+}
+
+private IEnumerator initCoroutine(bool needStabilization) {
+    var itemRegistry = RegistryManager.Inst.GetRegistry<Item>();
+
+    // Add items
+}
+```
+
+You can add a game element through `Registry<T>.Register(string key, T element)`. The parameter `key` is the unique string of the game element. For example, 
+```csharp
+Item item = ...; // initialize an item
+itemRegistry.Register("your.mod.specific.guid.ExampleItem", item);
+```
+
+Other registry APIs:
+```csharp
+var copperIngot = itemRegistry.GetElement("CopperIngod");
+if(itemRegistry.ExistsKey("your.mod.specific.guid.ExampleItem")) {
+    UnityEngine.Debug.LogInfo("An item with the key `your.mod.specific.guid.ExampleItem` exists.");
+}
+itemRegistry.Unregister("your.mod.specific.guid.ExampleItem");
+```
+
+Currently, we provide registries for the following types of game elements.
+| Game element | Type                           |
+| ------------ | ------------------------------ |
+| Item         | `LibCraftopia.Item.Item`       |
+| ItemFamily   | `LibCraftopia.Item.ItemFamily` |
+| Enchant      | `LibCraftopia.Enchant.Enchant` |
+
 #  Add an item
 
 ```csharp
 var icon = ...; // Icon Sprite
-var familyId = ItemHelper.Inst.NewFamilyId();
-var item = ItemBuilder.Create()
-  .NewId()
-  .Icon(icon)
-  .Category(ItemCategory._28_Potion)
-  .FamilyId(familyId)
-  .ItemType(ItemType.Consumption)
-  .Workbench(20011, 1) 
-  .Material(1218, 1)
-  .CooldownTime(1)
-  .RestoreHealth(200)
-  .Handler(ItemHelper.Inst.PotionHandler)
-  .Build();
-ItemHelper.Inst.AddItems(item);
+var familyId = ...; // Item family id
+var item = new Item();
+item.Icon = icon;
+item.Category = ItemCategory._28_Potion;
+item.FamilyId = familyId;
+item.ItemType = ItemType.Consumption;
+item.WorkbenchId = 20011;
+item.WorkbenchLevel = 1;
+item.MaterialAId = 1218;
+item.MaterialACount = 1;
+item.CooldownTime = 1;
+item.RestoreHealth = 200;
+item.Handler = ItemHelper.Inst.PotionHandler;
+itemRegistry.Register("peachpotion.PeachPotion", item);
 ```
 
-#  the display name of the added item
+#  Localize the display name of the added item
 
 ```csharp
-var displayName = LocalizationHelper.Inst.AddItemDisplayName(item.id);
+var displayName = LocalizationHelper.Inst.AddItemDisplayName(item.Id); // The registry assigns `Id` of an item automatically when registering the item.
 displayName.Languages[LocalizationHelper.Inst.EnglishIndex] = "Peach potion";
 displayName.Languages[LocalizationHelper.Inst.JapaneseIndex] = "ピーチポーション";
 displayName.Languages[LocalizationHelper.Inst.ChineseSimplifiedIndex] = "..."; // Sorry, i cannot write chinese
@@ -71,17 +115,17 @@ displayName.Languages[LocalizationHelper.Inst.ChineseTraditionalIndex] = "...";
 #  Add an Enchant
 
 ```csharp
-var enchant = LibCraftopia.Enchant.EnchantSetting.Create();
-enchant.NewId();
-enchant.Rarity(Oc.Item.EnchantRarity.Rare);
-enchant.LimitedCategoryId(EnchantSetting.LimitedCategory.Equipment);
-enchant.Effect(EnchantSetting.EffectName[0], 100);
-enchant.ProbInTreasureBox(new float[5] { 0, 0, 3, 3, 3});
-enchant.ProbInStoneDrop(0.8f);
-enchant.ProbInTreeDrop(0.8f);
-enchant.ProbInEnemyDrop(new int[] { 22, 23 }, new float[] { 0.5f, 0.1f });
-enchant.ProbInRandomDrop(0.3f);
-EnchantHelper.Inst.AddEnchant(enchant);
+var enchant = new Enchant();
+enchant.Rarity = Oc.Item.EnchantRarity.Rare;
+enchant.LimitedCategoryId = (int)EnchantLimitedCategory.Equipment;
+enchant[EnchantEffect.modify_Atk] = 100;
+enchant.ProbInTreasureBox = new float[] { 0, 0, 3, 3, 3};
+enchant.ProbInStoneDrop = 0.8f;
+enchant.ProbInTreeDrop = 0.8f;
+enchant.ProbInEnemyDrop[22] = 0.5f;
+enchant.ProbInEnemyDrop[23] = 0.1f;
+enchant.ProbInRandomDrop = 0.3f;
+enchantRegistry.Register("myenchant.MyEnchant", enchant);
 ```
 
 # Add a chat command

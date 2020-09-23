@@ -68,6 +68,7 @@ namespace LibCraftopia.Enchant
         private static bool TryAddEnchant(KeyValuePair<int, float> pair, ref OcItem item)
         {
             var v = UnityEngine.Random.value;
+            Logger.Inst.LogInfo($"Add an enchant {LocalizationHelper.Inst.GetEnchantDisplayName(pair.Key)} if {v} < {pair.Value}");
             if (v < pair.Value)
             {
                 SoEnchantment byId_OrNull = OcResidentData.EnchantDataList.GetById_OrNull(pair.Key);

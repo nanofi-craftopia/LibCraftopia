@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace LibCraftopia.Item
 {
+    [Obsolete]
     public class ItemBuilder
     {
         private readonly ItemData item = ScriptableObject.CreateInstance<ItemData>();

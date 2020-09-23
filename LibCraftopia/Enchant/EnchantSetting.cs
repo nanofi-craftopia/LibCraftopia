@@ -12,6 +12,7 @@ namespace LibCraftopia.Enchant
     //SoEnchantment does not store drop-related information. 
     //Therefore, this class should not be used as a builder 
     //because it is inefficient if drop-related processing is not done in batches.
+    [Obsolete]
     public class EnchantSetting
     {
 
@@ -159,8 +160,8 @@ namespace LibCraftopia.Enchant
 
         public EnchantSetting ProbInTreasureBox(float[] value)
         {
-            if (value.Length != EnchantHelper.maxRarity)
-                throw new ArgumentException(string.Format("value's length must be {0} but {1}", EnchantHelper.maxRarity, value.Length));
+            if (value.Length != EnchantHelper.Inst.MaxRarity)
+                throw new ArgumentException(string.Format("value's length must be {0} but {1}", EnchantHelper.Inst.MaxRarity, value.Length));
             this.probInTreassureBoxes = value;
             return this;
         }
