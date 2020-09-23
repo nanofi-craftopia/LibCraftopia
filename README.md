@@ -63,10 +63,19 @@ private IEnumerator initCoroutine(bool needStabilization) {
 You can add a game element through `Registry<T>.Register(string key, T element)`. The parameter `key` is the unique string of the game element. For example, 
 ```csharp
 Item item = ...; // initialize an item
-itemRegistry.Register("your.mod.specifi.guid.ExampleItem", item);
+itemRegistry.Register("your.mod.specific.guid.ExampleItem", item);
 ```
 
-Currently, we provide registries for the following types of the game elements.
+Other registry APIs:
+```csharp
+var copperIngot = itemRegistry.GetElement("CopperIngod");
+if(itemRegistry.ExistsKey("your.mod.specific.guid.ExampleItem")) {
+    UnityEngine.Debug.LogInfo("An item with the key `your.mod.specific.guid.ExampleItem` exists.");
+}
+itemRegistry.Unregister("your.mod.specific.guid.ExampleItem");
+```
+
+Currently, we provide registries for the following types of game elements.
 | Game element | Type                           |
 | ------------ | ------------------------------ |
 | Item         | `LibCraftopia.Item.Item`       |
