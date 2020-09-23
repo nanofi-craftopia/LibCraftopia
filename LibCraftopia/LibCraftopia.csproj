@@ -7,7 +7,7 @@
 		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 		<Authors>nanofi</Authors>
 		<Copyright>Copyright (c) nanofi</Copyright>
-		<Description>A unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
+		<Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
 		<LangVersion>8.0</LangVersion>
 	</PropertyGroup>
 
