@@ -10,7 +10,7 @@ An unofficial modding library for Craftopia (https://store.steampowered.com/app/
 This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. Also, follow the tutorial of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/dev_guide/plugin_tutorial/index.html, to create your BepInEx mod.
 
 
-Download the dll from the above release badge and add a reference to `LibCraftopia.dll` to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download the `LibCraftopia.dll` from the above download badge and add a reference to the downloaded dll file to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
