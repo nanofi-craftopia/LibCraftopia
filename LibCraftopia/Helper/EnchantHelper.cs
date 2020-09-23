@@ -12,11 +12,13 @@ namespace LibCraftopia.Helper
 {
     public class EnchantHelper : SingletonMonoBehaviour<EnchantHelper>
     {
-
+        [Obsolete]
         public static readonly int maxRarity = 5;//SoEnchantDataList.MaxRarity i don't now how to access
 
         protected override void OnUnityAwake()
         {
+            MaxRarity = AccessTools.StaticFieldRefAccess<SoEnchantDataList, int>("MaxRarity");
+
             UnspecifiedEnemyDrop = new Dictionary<int, float>();
             SpecifiedEnemyDrop = new Dictionary<int, Dictionary<int, float>>();
             TreeRandomDrop = new Dictionary<int, float>();
@@ -25,7 +27,9 @@ namespace LibCraftopia.Helper
             soResidentDataTraverse = new Traverse(OcResidentData.Inst);
             enchantList = soResidentDataTraverse.Field<SoEnchantDataList>("_enchantDataList").Value;
             enchantListTraverse = new Traverse(enchantList);
+#pragma warning disable CS0612 // 型またはメンバーが旧型式です
             vanillaLastID = LastId(AllEnchant);
+#pragma warning restore CS0612 // 型またはメンバーが旧型式です
         }
 
         private Traverse soResidentDataTraverse;
@@ -34,6 +38,8 @@ namespace LibCraftopia.Helper
         private SoEnchantment[] allEnchantCache;
         private int lastId;
         internal int vanillaLastID;
+
+        public int MaxRarity { get; private set; }
 
         //The number of enchantments an item or enemy can hold is limited, so hold them separately.
         public Dictionary<int, float> UnspecifiedEnemyDrop { get; private set; }
@@ -52,11 +58,13 @@ namespace LibCraftopia.Helper
             return all;
         }
 
+        [Obsolete]
         public SoEnchantment[] AllEnchant
         {
             get { return cachedAllEnchant(); }
         }
 
+        [Obsolete]
         public SoEnchantment[] ValidEnchant
         {
             get {
@@ -64,6 +72,7 @@ namespace LibCraftopia.Helper
             }
         }
 
+        [Obsolete]
         public int NewId()
         {
             cachedAllEnchant();
@@ -75,6 +84,7 @@ namespace LibCraftopia.Helper
             return Math.Max(lastId, all.Select(enchant => enchant.ID).Max());
         }
 
+        [Obsolete]
         public void AddEnchant(params EnchantSetting[] settings)
         {
             var newAllEnchant = allEnchantCache.Concat(TakeOut(settings)).ToArray();
@@ -86,16 +96,19 @@ namespace LibCraftopia.Helper
             UpdateSpecifiedEnemyProb(settings);
         }
 
+        [Obsolete]
         private int VanillaLastId(SoEnchantment[] all)
         {
             return AllEnchant.Select(enchant => enchant.ID).Max();
         }
 
+        [Obsolete]
         private SoEnchantment[] TakeOut(EnchantSetting[] settings)
         {
             return (from s in settings select s.enchant).ToArray<SoEnchantment>();
         }
 
+        [Obsolete]
         private void UpdateTreassureProb(EnchantSetting[] settings)
         {
             var maxId = settings.Select(setting => setting.enchant.ID).Max();
@@ -116,6 +129,7 @@ namespace LibCraftopia.Helper
 
         }
 
+        [Obsolete]
         private void UpdateStoneProb(EnchantSetting[] settings)
         {
             foreach (var s in settings)
@@ -124,6 +138,7 @@ namespace LibCraftopia.Helper
             }
         }
 
+        [Obsolete]
         private void UpdateTreeProb(EnchantSetting[] settings)
         {
             foreach (var s in settings)
@@ -132,6 +147,7 @@ namespace LibCraftopia.Helper
             }
         }
 
+        [Obsolete]
         private void UpdateUnspecifiedEnemyProb(EnchantSetting[] settings)
         {
             foreach (var s in settings)
@@ -140,6 +156,7 @@ namespace LibCraftopia.Helper
             }
         }
 
+        [Obsolete]
         private void UpdateSpecifiedEnemyProb(EnchantSetting[] settings)
         {
             foreach (var s in settings)

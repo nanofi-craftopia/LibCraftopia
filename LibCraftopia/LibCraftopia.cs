@@ -43,7 +43,8 @@ namespace LibCraftopia
         {
             RegistryManager.Inst.CreateRegistry(new ItemFamilyRegistryHandler());
             RegistryManager.Inst.CreateRegistry(new ItemRegistryHandler());
-            yield return null;
+            RegistryManager.Inst.CreateRegistry(new EnchantRegistryHandler());
+            yield break;
         }
     }
 }
