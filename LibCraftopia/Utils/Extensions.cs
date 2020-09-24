@@ -48,5 +48,17 @@ namespace LibCraftopia.Utils
                 }
             });
         }
+
+        public static void Increment<K>(this Dictionary<K,int> self, K key)
+        {
+            if (self.TryGetValue(key, out var count))
+            {
+                self[key] = count + 1;
+            }
+            else
+            {
+                self.Add(key, 1);
+            }
+        }
     }
 }

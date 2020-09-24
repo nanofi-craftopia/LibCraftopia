@@ -19,6 +19,7 @@ namespace LibCraftopia.Enchant
         public int MaxId => byte.MaxValue;
 
         public int MinId => 0;
+        public int UserMinId => 200;
 
         public bool IsGameDependent => false;
 
@@ -73,17 +74,25 @@ namespace LibCraftopia.Enchant
             var task = Task.Run(() =>
             {
                 var enchantList = OcResidentData.EnchantDataList;
-                foreach (var enchant in enchantList.GetAll())
+                var all = enchantList.GetAll();
+                var counts = new Dictionary<string, int>();
+                var list = new List<Tuple<string, SoEnchantment>>(all.Length);
+                foreach (var enchant in all)
                 {
                     var key = LocalizationHelper.Inst.GetEnchantDisplayName(enchant.ID, LocalizationHelper.English)?.ToValidKey() ?? enchant.ID.ToString();
-                    // DisplayName conflicts
-                    if (key == "Test" || key == "Dried" || key.IsNullOrEmpty())
+                    counts.Increment(key);
+                    list.Add(Tuple.Create(key, enchant));
+                }
+                foreach (var tuple in list)
+                {
+                    var key = tuple.Item1;
+                    var enchant = tuple.Item2;
+                    if (counts[key] > 1)
                     {
                         var jpName = LocalizationHelper.Inst.GetEnchantDisplayName(enchant.ID, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {enchant.ID}, {key}, {jpName}");
                         key += enchant.ID.ToString();
                     }
-                    //
                     registry.RegisterVanilla(key, enchant);
                 }
             }).LogError();

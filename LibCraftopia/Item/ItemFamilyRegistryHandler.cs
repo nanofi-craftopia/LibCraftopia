@@ -19,6 +19,7 @@ namespace LibCraftopia.Item
         public int MaxId => int.MaxValue;
 
         public int MinId => 0;
+        public int UserMinId => 1000000;
 
         public bool IsGameDependent => false;
 
@@ -43,17 +44,25 @@ namespace LibCraftopia.Item
             var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
             var task = Task.Run(() =>
             {
-                foreach (var family in familyList.GetAll())
+                var all = familyList.GetAll();
+                var counts = new Dictionary<string, int>();
+                var list = new List<Tuple<string, SoItemFamily>>(all.Length);
+                foreach (var family in all)
                 {
                     var key = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.English)?.ToValidKey() ?? family.FamilyId.ToString();
-                    // DisplayName conflicts
-                    if (key == "OneHandedSword" || key == "TwoHandedWeapon" || key == "Leftover" || key.IsNullOrEmpty())
+                    counts.Increment(key);
+                    list.Add(Tuple.Create(key, family));
+                }
+                foreach (var tuple in list)
+                {
+                    var key = tuple.Item1;
+                    var family = tuple.Item2;
+                    if(counts[key] > 1)
                     {
                         var jpName = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {family.FamilyId}, {key}, {jpName}");
                         key += family.FamilyId.ToString();
                     }
-                    // 
                     registry.RegisterVanilla(key, family);
                 }
             }).LogError();

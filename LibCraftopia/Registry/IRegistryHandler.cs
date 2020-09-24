@@ -9,6 +9,7 @@ namespace LibCraftopia.Registry
     {
         int MaxId { get; }
         int MinId { get; }
+        int UserMinId { get; }
         bool IsGameDependent { get; }
 
         void OnRegister(string key, int id, T value);

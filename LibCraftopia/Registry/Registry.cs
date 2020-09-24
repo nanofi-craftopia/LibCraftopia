@@ -33,6 +33,7 @@ namespace LibCraftopia.Registry
         public string Name { get; private set; }
         public int MinId { get => handler.MinId; }
         public int MaxId { get => handler.MaxId; }
+        public int UserMinId { get => handler.UserMinId; }
         public bool IsGameDependent { get => handler.IsGameDependent; }
 
         public ICollection<T> Elements { get => elements.Values; }
@@ -41,7 +42,7 @@ namespace LibCraftopia.Registry
         {
             Name = name;
             this.handler = handler;
-            currentId = handler.MinId;
+            currentId = UserMinId;
         }
 
         public void Register(string key, T value)
@@ -157,10 +158,10 @@ namespace LibCraftopia.Registry
                         keyIdDict.Add(key, id);
                     }
                 }
-                if (currentId < MinId)
+                if (currentId < UserMinId)
                 {
-                    Logger.Inst.LogWarning($"Register({Name}): The saved current id ({currentId}) conflicts the min id ({MinId}). Set the min id to current id.");
-                    currentId = MinId;
+                    Logger.Inst.LogWarning($"Register({Name}): The saved current id ({currentId}) conflicts the user min id ({UserMinId}). Set the user min id to current id.");
+                    currentId = UserMinId;
                 }
             }).LogError();
         }

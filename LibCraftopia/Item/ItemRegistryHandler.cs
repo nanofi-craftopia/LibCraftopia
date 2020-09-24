@@ -21,6 +21,7 @@ namespace LibCraftopia.Item
         public int MaxId => (int)short.MaxValue;
 
         public int MinId => 0;
+        public int UserMinId => 15000;
 
         public bool IsGameDependent => false;
 
@@ -55,19 +56,26 @@ namespace LibCraftopia.Item
             var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
             var task = Task.Run(() =>
             {
-                foreach (var item in itemList.GetAll())
+                var all = itemList.GetAll();
+                var counts = new Dictionary<string, int>();
+                var list = new List<Tuple<string, ItemData>>(all.Length);
+                foreach (var item in all)
                 {
                     var key = item.IsEnabled ? LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey() ?? item.Id.ToString() : item.Id.ToString();
-                    // DisplayName conflicts
-                    if (key == "HeadEquipmentUnique" || key == "HorizontalWall" || key == "A" || key == "B" || key == "C" || key == "SF" || key.IsNullOrEmpty())
+                    counts.Increment(key);
+                    list.Add(Tuple.Create(key, item));
+                }
+                foreach (var tuple in list)
+                {
+                    var key = tuple.Item1;
+                    var item = tuple.Item2;
+                    if (counts[key] > 1)
                     {
                         var jpName = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {item.Id}, {key}, {jpName}");
                         key += item.Id.ToString();
                     }
-                    // 
                     registry.RegisterVanilla(key, item);
-
                 }
             }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
