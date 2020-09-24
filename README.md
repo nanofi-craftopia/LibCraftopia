@@ -42,7 +42,7 @@ private IEnumerator initGameCoroutine(bool needStabilization) {
 }
 ```
 
-Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be called during the loading scene. By appropriate implementation of the corroutines, we can avoid freezing the game application. The difference between `InitializeLoaders` and `InitializeGameLoaders` is that while coroutines added to `InitializeLoaders` will be called once the game scene is loaded, coroutines added to `InitializeGameLoaders` will be called each time the game scene is loaded. For example, when we go back to the title scene and start the game again, coroutines in `InitializeLoaders` are not called, whereas that in `InitializeGameLoaders` are called.
+Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be called during the loading scene. By appropriate implementation of the coroutines, we can avoid freezing the game application. The difference between `InitializeLoaders` and `InitializeGameLoaders` is that while coroutines added to `InitializeLoaders` will be called once the game scene is loaded, coroutines added to `InitializeGameLoaders` will be called each time the game scene is loaded. For example, when we go back to the title scene and start the game again, coroutines in `InitializeLoaders` are not called, whereas that in `InitializeGameLoaders` are called.
 
 # Registry
 
@@ -180,6 +180,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/24 v0.1.7 Fix for the latest game
 - 2020/09/24 v0.1.6 Add registry feature + Bug fix
 - 2020/09/21 v0.1.5 Fix bug in loading feature
 - 2020/09/19 v0.1.4 Add loading feature + Bug fix
