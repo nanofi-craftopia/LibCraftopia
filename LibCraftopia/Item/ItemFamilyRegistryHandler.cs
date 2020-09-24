@@ -19,9 +19,13 @@ namespace LibCraftopia.Item
         public int MaxId => int.MaxValue;
 
         public int MinId => 0;
-        public int UserMinId => 1000000;
-
+        public int UserMinId { get; }
         public bool IsGameDependent => false;
+
+        public ItemFamilyRegistryHandler()
+        {
+            UserMinId = Config.Inst.Bind("Item", "ItemFamilyMinUserId", 1000000, "The minimum id jof an item item family added by mod.").Value;
+        }
 
         public IEnumerator Apply(ICollection<ItemFamily> elements)
         {
@@ -57,7 +61,7 @@ namespace LibCraftopia.Item
                 {
                     var key = tuple.Item1;
                     var family = tuple.Item2;
-                    if(counts[key] > 1)
+                    if (counts[key] > 1)
                     {
                         var jpName = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {family.FamilyId}, {key}, {jpName}");

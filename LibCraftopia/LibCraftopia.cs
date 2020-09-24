@@ -23,6 +23,7 @@ namespace LibCraftopia
             harmony.PatchAll(typeof(LoadingPatch));
             harmony.PatchAll(typeof(OcItemDropperPatch));
             harmony.PatchAll(typeof(ChatCommandPatch));
+            this.gameObject.AddComponent<Config>().Init(Config);
             this.gameObject.AddComponent<Logger>().Init(Logger);
         }
 

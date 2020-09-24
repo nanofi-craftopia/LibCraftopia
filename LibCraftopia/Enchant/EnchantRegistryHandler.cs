@@ -19,9 +19,14 @@ namespace LibCraftopia.Enchant
         public int MaxId => byte.MaxValue;
 
         public int MinId => 0;
-        public int UserMinId => 200;
+        public int UserMinId { get; }
 
         public bool IsGameDependent => false;
+
+        public EnchantRegistryHandler()
+        {
+            UserMinId = Config.Inst.Bind("Enchant", "EnchantMinUserId", 200, "The minimum id of an enchant added by mod.").Value;
+        }
 
         public IEnumerator Apply(ICollection<Enchant> elements)
         {

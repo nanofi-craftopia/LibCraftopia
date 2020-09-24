@@ -21,9 +21,14 @@ namespace LibCraftopia.Item
         public int MaxId => (int)short.MaxValue;
 
         public int MinId => 0;
-        public int UserMinId => 15000;
+        public int UserMinId { get; }
 
         public bool IsGameDependent => false;
+
+        public ItemRegistryHandler()
+        {
+            UserMinId = Config.Inst.Bind("Item", "ItemMinUserId", 15000, "The minimum id of an item added by mod.").Value;
+        }
 
         public IEnumerator Apply(ICollection<Item> elements)
         {

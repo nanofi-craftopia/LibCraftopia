@@ -110,12 +110,12 @@ namespace LibCraftopia.Registry
 
         private int findNewId()
         {
-            var newId = currentId++;
-            if (newId >= MaxId)
+            while (!keyIdDict.ContainsRight(currentId)) currentId++;
+            if (currentId >= MaxId)
             {
-                throw new InvalidOperationException($"Register({Name}): id runs out. New id {newId} v.s. Max id {MaxId}.");
+                throw new InvalidOperationException($"Register({Name}): id runs out. New id {currentId} v.s. Max id {MaxId}.");
             }
-            return newId;
+            return currentId;
         }
 
         public IEnumerator Init()
@@ -134,10 +134,10 @@ namespace LibCraftopia.Registry
             Logger.Inst.LogInfo($"Register({Name}): applying to the game ends.");
         }
 
-        private string Filename
-        {
-            get => string.Format("{0}.regist", Name);
-        }
+        private string Filename => $"{Name}.regist";
+
+
+        private const int VERSION = 1;
 
         public Task Load(string baseDir)
         {
@@ -149,21 +149,40 @@ namespace LibCraftopia.Registry
                 elements.Clear();
                 using (var reader = new BinaryReader(File.OpenRead(path)))
                 {
-                    currentId = reader.ReadInt32();
-                    int size = reader.ReadInt32();
-                    for (int i = 0; i < size; i++)
+                    try
                     {
-                        string key = reader.ReadString();
-                        int id = reader.ReadInt32();
-                        keyIdDict.Add(key, id);
+                        var version = reader.ReadInt32();
+                        switch (version)
+                        {
+                            case 1:
+                            default:
+                                loadVersion1(reader);
+                                break;
+                        }
+                    }
+                    catch
+                    {
+                        keyIdDict.Clear();
+                        elements.Clear();
+                        try
+                        {
+                            File.Delete(path);
+                        }
+                        catch { }
                     }
                 }
-                if (currentId < UserMinId)
-                {
-                    Logger.Inst.LogWarning($"Register({Name}): The saved current id ({currentId}) conflicts the user min id ({UserMinId}). Set the user min id to current id.");
-                    currentId = UserMinId;
-                }
             }).LogError();
+        }
+
+        private void loadVersion1(BinaryReader reader)
+        {
+            int size = reader.ReadInt32();
+            for (int i = 0; i < size; i++)
+            {
+                string key = reader.ReadString();
+                int id = reader.ReadInt32();
+                keyIdDict.Add(key, id);
+            }
         }
 
         public Task Save(string baseDir)
@@ -173,7 +192,7 @@ namespace LibCraftopia.Registry
                 string path = Path.Combine(baseDir, Filename);
                 using (var writer = new BinaryWriter(File.OpenWrite(path)))
                 {
-                    writer.Write(currentId);
+                    writer.Write(VERSION);
                     writer.Write(keyIdDict.Count);
                     foreach (var item in keyIdDict)
                     {
