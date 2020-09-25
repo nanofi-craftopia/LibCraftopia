@@ -110,10 +110,13 @@ namespace LibCraftopia.Registry
 
         private int findNewId()
         {
-            while (!keyIdDict.ContainsRight(currentId)) currentId++;
-            if (currentId >= MaxId)
+            while (keyIdDict.ContainsRight(currentId))
             {
-                throw new InvalidOperationException($"Register({Name}): id runs out. New id {currentId} v.s. Max id {MaxId}.");
+                currentId++;
+                if (currentId >= MaxId)
+                {
+                    throw new InvalidOperationException($"Register({Name}): id runs out. New id {currentId} v.s. Max id {MaxId}.");
+                }
             }
             return currentId;
         }

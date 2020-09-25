@@ -47,7 +47,7 @@ namespace LibCraftopia.Item
                 AccessTools.Method(typeof(OcItemDataMng), "SetupFamilyMap").Invoke(itemManager, new object[] { });
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
                 var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
-                AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = appear;
+                AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = fille;
             }).LogError();
             while (!task.IsCompleted && !task.IsCanceled)
             {
