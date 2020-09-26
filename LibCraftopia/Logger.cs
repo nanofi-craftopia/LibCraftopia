@@ -47,5 +47,12 @@ namespace LibCraftopia
         {
             Log(LogLevel.Warning, data);
         }
+
+        internal void LogException(Exception e)
+        {
+            LogError(e);
+            LogError(e.Message);
+            LogError(e.StackTrace);
+        }
     }
 }

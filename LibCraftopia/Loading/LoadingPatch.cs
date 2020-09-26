@@ -37,13 +37,13 @@ namespace LibCraftopia.Loading
             }
             if (____nextSceneName != "OcScene_Home")
             {
-                Logger.Inst.LogInfo("Mods' loading procedures start");
-                var loaders = LoadingManager.Inst.OnLoadScene(needsStabilization);
+                Logger.Inst.LogInfo("Mods' initialization procedures start");
+                var loaders = LoadingManager.Inst.InvokeInitialize(needsStabilization);
                 while (loaders.MoveNext())
                 {
                     yield return loaders.Current;
                 }
-                Logger.Inst.LogInfo("Mods' loading procedures end");
+                Logger.Inst.LogInfo("Mods' initialization procedures end");
             }
             yield return new WaitForEndOfFrame();
             while (startedManagers.Count > 0)
@@ -54,6 +54,16 @@ namespace LibCraftopia.Loading
             while (original.MoveNext())
             {
                 yield return original.Current;
+            }
+            if (____nextSceneName != "OcScene_Home")
+            {
+                Logger.Inst.LogInfo("Mods' after loaded procedures start");
+                var loaders = LoadingManager.Inst.InvokeAfterLoad(needsStabilization);
+                while (loaders.MoveNext())
+                {
+                    yield return loaders.Current;
+                }
+                Logger.Inst.LogInfo("Mods' after loaded procedures end");
             }
         }
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace LibCraftopia.Utils
 {
@@ -41,10 +42,7 @@ namespace LibCraftopia.Utils
             {
                 if (task.Exception != null)
                 {
-                    var e = task.Exception;
-                    Logger.Inst.LogError(e);
-                    Logger.Inst.LogError(e.Message);
-                    Logger.Inst.LogError(e.StackTrace);
+                    Logger.Inst.LogException(task.Exception);
                 }
             });
         }
@@ -58,6 +56,23 @@ namespace LibCraftopia.Utils
             else
             {
                 self.Add(key, 1);
+            }
+        }
+
+        public static IEnumerator LogErrored(this IEnumerator self)
+        {
+            while (true)
+            {
+                try
+                {
+                    var next = self.MoveNext();
+                    if (!next) break;
+                }catch(Exception e)
+                {
+                    Logger.Inst.LogException(e);
+                    break;
+                }
+                yield return self.Current;
             }
         }
     }
