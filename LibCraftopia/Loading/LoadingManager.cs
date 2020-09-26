@@ -20,6 +20,7 @@ namespace LibCraftopia.Loading
         {
             InitializeLoaders = new PrioritiezedList<int, Func<bool, IEnumerator>>();
             InitializeGameLoaders = new PrioritiezedList<int, Func<bool, IEnumerator>>();
+            AfterLoadLoaders = new PrioritiezedList<int, Func<bool, IEnumerator>>();
         }
 
         private bool initialized = false;

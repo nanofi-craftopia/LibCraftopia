@@ -23,8 +23,9 @@ Download the `LibCraftopia.dll` from the above download badge and add a referenc
 You can add your initialization procedure as follows:
 ```csharp
 void Start() {
-    LoadingManager.Inst.InitializeLoaders.Add(10, initCoroutine); // 10 is priority. Smaller coroutine will be called earlyer. 
-    LoadingManager.Inst.InitializeGameLoaders.Add(10, initGameCoroutine);
+    LoadingManager.Inst.InitializeLoaders.Add(50, initCoroutine); // 10 is priority. Smaller coroutine will be called earlyer. 
+    LoadingManager.Inst.InitializeGameLoaders.Add(50, initGameCoroutine);
+    LoadingManager.Inst.AfterLoadLoaders.Add(50, loadedCoroutine);
 }
 
 private IEnumerator initCoroutine(bool needStabilization) {
@@ -39,6 +40,10 @@ private IEnumerator initGameCoroutine(bool needStabilization) {
     // This means that if you want to modify these game contents, you need to modify them whenever the game scene is loaded.
     // Coroutines added to `InitializeGameLoaders` will be called immediately after starting the game scene's loading. 
     // Note that this is coroutine
+}
+
+private IEnumerator loadedCoroutine(bool needStabilization) {
+    // This coroutine will be called just after the end of scene load. 
 }
 ```
 
@@ -180,6 +185,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/27 v0.1.10 After loaded callback + Bug fix 
 - 2020/09/26 v0.1.9 Bug fix
 - 2020/09/25 v0.1.8 Add a way to configure the minimum id of user added game elements
 - 2020/09/24 v0.1.7 Fix for the latest game

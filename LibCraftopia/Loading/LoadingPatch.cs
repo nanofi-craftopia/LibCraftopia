@@ -24,7 +24,7 @@ namespace LibCraftopia.Loading
 
         [HarmonyPatch(typeof(OcGameSceneTransformManager), "IELoadScenesAsync")]
         [HarmonyPostfix]
-        static IEnumerator PostfixIELoadScenesAsync(IEnumerator original, bool needsStabilization, string ____nextSceneName)
+        static IEnumerator PostfixIELoadScenesAsync(IEnumerator original, bool needsStabilization, OcGameSceneTransformManager __instance, string ____nextSceneName)
         {
             while (original.MoveNext())
             {
@@ -51,10 +51,13 @@ namespace LibCraftopia.Loading
                 startedManagers.Dequeue()();
                 yield return new WaitForEndOfFrame();
             }
+            var traverse = new Traverse(__instance).Field<bool>("_loading");
             while (original.MoveNext())
             {
                 yield return original.Current;
+                if (!traverse.Value) break;
             }
+            traverse.Value = true;
             if (____nextSceneName != "OcScene_Home")
             {
                 Logger.Inst.LogInfo("Mods' after loaded procedures start");
@@ -64,6 +67,11 @@ namespace LibCraftopia.Loading
                     yield return loaders.Current;
                 }
                 Logger.Inst.LogInfo("Mods' after loaded procedures end");
+            }
+            traverse.Value = false;
+            while (original.MoveNext())
+            {
+                yield return original.Current;
             }
         }
 
