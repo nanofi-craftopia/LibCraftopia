@@ -34,7 +34,7 @@ namespace LibCraftopia.Registry
         public int MinId { get => handler.MinId; }
         public int MaxId { get => handler.MaxId; }
         public int UserMinId { get => handler.UserMinId; }
-        public bool IsGameDependent { get => handler.IsGameDependent; }
+        bool IRegistry.IsGameDependent { get => handler.IsGameDependent; }
 
         public ICollection<T> Elements { get => elements.Values; }
 
@@ -71,6 +71,18 @@ namespace LibCraftopia.Registry
         public T GetElement(string key)
         {
             return elements[key];
+        }
+
+        public T GetElementById(int id)
+        {
+            if(keyIdDict.TryGetLeft(id, out var key))
+            {
+                if(elements.TryGetValue(key, out var element))
+                {
+                    return element;
+                }
+            }
+            return default(T);
         }
 
         internal void RegisterVanilla(string key, T value)
@@ -121,7 +133,7 @@ namespace LibCraftopia.Registry
             return currentId;
         }
 
-        public IEnumerator Init()
+        IEnumerator IRegistry.Init()
         {
             Logger.Inst.LogInfo($"Register({Name}): initialize start.");
             var enumerator = handler.Init(this);
@@ -129,7 +141,7 @@ namespace LibCraftopia.Registry
             Logger.Inst.LogInfo($"Register({Name}): initialize end.");
         }
 
-        public IEnumerator Apply()
+        IEnumerator IRegistry.Apply()
         {
             Logger.Inst.LogInfo($"Register({Name}): applying to the game starts.");
             var enumerator = handler.Apply(elements.Values);
@@ -142,7 +154,7 @@ namespace LibCraftopia.Registry
 
         private const int VERSION = 1;
 
-        public Task Load(string baseDir)
+        Task IRegistry.Load(string baseDir)
         {
             return Task.Run(() =>
             {
@@ -188,7 +200,7 @@ namespace LibCraftopia.Registry
             }
         }
 
-        public Task Save(string baseDir)
+        Task IRegistry.Save(string baseDir)
         {
             return Task.Run(() =>
             {

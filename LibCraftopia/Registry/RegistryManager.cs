@@ -13,7 +13,8 @@ namespace LibCraftopia.Registry
     {
         private readonly string baseDir = Path.Combine(Paths.ConfigPath, "LibCraftopia");
         private readonly Dictionary<Type, IRegistry> registries = new Dictionary<Type, IRegistry>();
-        private bool initialized = false;
+
+        public bool Initialized { get; private set; } = false;
 
         protected override void OnUnityAwake()
         {
@@ -34,7 +35,7 @@ namespace LibCraftopia.Registry
                 var enumerator = registry.Init();
                 while (enumerator.MoveNext()) yield return enumerator.Current;
             }
-            initialized = true;
+            Initialized = true;
             yield break;
         }
 
@@ -80,7 +81,7 @@ namespace LibCraftopia.Registry
 
         public Registry<T> CreateRegistry<T>(IRegistryHandler<T> handler) where T : IRegistryEntry
         {
-            if (initialized)
+            if (Initialized)
             {
                 throw new Exception("A registry must be created before initialization. Add a registry in a coroutine added to `LoadingManager.Inst.InitializeLoaders` with a priority less than 20.");
             }
@@ -97,7 +98,7 @@ namespace LibCraftopia.Registry
 
         public Registry<T> GetRegistry<T>() where T : IRegistryEntry
         {
-            if (!initialized)
+            if (!Initialized)
             {
                 throw new Exception("We cannot access to registries before initialization. This method can be accessed from coroutines added to `LoadingManager.Inst.InitializeLoaders` with a priority grater than 20 or coroutines added to `LoadingManager.Inst.InitializeGameLoaders`.");
             }
