@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
+using UnityEngine;
 
 namespace LibCraftopia.Utils
 {
@@ -47,7 +48,7 @@ namespace LibCraftopia.Utils
             });
         }
 
-        public static void Increment<K>(this Dictionary<K,int> self, K key)
+        public static void Increment<K>(this Dictionary<K, int> self, K key)
         {
             if (self.TryGetValue(key, out var count))
             {
@@ -59,7 +60,7 @@ namespace LibCraftopia.Utils
             }
         }
 
-        public static IEnumerator LogErrored(this IEnumerator self)
+        internal static IEnumerator LogErrored(this IEnumerator self)
         {
             while (true)
             {
@@ -67,7 +68,8 @@ namespace LibCraftopia.Utils
                 {
                     var next = self.MoveNext();
                     if (!next) break;
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.Inst.LogException(e);
                     break;
