@@ -4,6 +4,7 @@ using LibCraftopia.Registry;
 using LibCraftopia.Utils;
 using Oc;
 using Oc.Item;
+using Oc.Item.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,6 +41,7 @@ namespace LibCraftopia.Item
             {
                 yield return new WaitForSeconds(0.1f);
             }
+            OcItemUI_CraftMng.Inst.UpdatePlayerCarftableItem();
         }
 
         public IEnumerator Init(Registry<ItemFamily> registry)
