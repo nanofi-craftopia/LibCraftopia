@@ -21,6 +21,7 @@ namespace LibCraftopia
             var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
             harmony.PatchAll(typeof(GlobalHook));
             harmony.PatchAll(typeof(LoadingPatch));
+            harmony.PatchAll(typeof(ItemPatch));
             harmony.PatchAll(typeof(OcItemDropperPatch));
             harmony.PatchAll(typeof(ChatCommandPatch));
             this.gameObject.AddComponent<Config>().Init(Config);

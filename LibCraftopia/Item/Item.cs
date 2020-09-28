@@ -83,6 +83,8 @@ namespace LibCraftopia.Item
         public OcPlActiveSkillType ActiveSkillType { get => Inner.ActiveSkillType; set => AccessTools.FieldRefAccess<ItemData, OcPlActiveSkillType>(Inner, "activeSkillType") = value; }
         public OcPlPassiveSkillType PassiveSkillType { get => Inner.PassiveSkillType; set => AccessTools.FieldRefAccess<ItemData, OcPlPassiveSkillType>(Inner, "passiveSkillType") = value; }
 
+        public IItemPutHandler PutHandler { get; set; }
+
         public bool IsEnabled { get => Inner.IsEnabled; }
         public bool IsAppearIngame { get => Inner.IsAppearIngame; }
 
