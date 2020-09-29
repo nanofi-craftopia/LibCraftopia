@@ -73,6 +73,11 @@ namespace LibCraftopia.Registry
             return elements[key];
         }
 
+        public bool TryGetElement(string key, out T value)
+        {
+            return elements.TryGetValue(key, out value);
+        }
+
         public T GetElementById(int id)
         {
             if(keyIdDict.TryGetLeft(id, out var key))
