@@ -185,6 +185,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/09/30 v0.1.12 Bug fix
 - 2020/09/29 v0.1.11 Item put handler + Bug fix
 - 2020/09/27 v0.1.10 After loaded callback + Bug fix 
 - 2020/09/26 v0.1.9 Bug fix
