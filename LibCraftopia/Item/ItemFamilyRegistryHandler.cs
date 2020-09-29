@@ -55,10 +55,11 @@ namespace LibCraftopia.Item
                 var list = new List<Tuple<string, SoItemFamily>>(all.Length);
                 foreach (var family in all)
                 {
-                    var key = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.English)?.ToValidKey() ?? family.FamilyId.ToString();
+                    string key = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.English)?.ToValidKey() ?? family.FamilyId.ToString();
                     counts.Increment(key);
                     list.Add(Tuple.Create(key, family));
                 }
+                var unique = new Dictionary<string, int>();
                 foreach (var tuple in list)
                 {
                     var key = tuple.Item1;
@@ -67,7 +68,8 @@ namespace LibCraftopia.Item
                     {
                         var jpName = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {family.FamilyId}, {key}, {jpName}");
-                        key += family.FamilyId.ToString();
+                        unique.Increment(key);
+                        key += $"-{unique[key]}";
                     }
                     registry.RegisterVanilla(key, family);
                 }

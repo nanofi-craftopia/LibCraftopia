@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace LibCraftopia.Registry
 {
@@ -80,9 +81,9 @@ namespace LibCraftopia.Registry
 
         public T GetElementById(int id)
         {
-            if(keyIdDict.TryGetLeft(id, out var key))
+            if (keyIdDict.TryGetLeft(id, out var key))
             {
-                if(elements.TryGetValue(key, out var element))
+                if (elements.TryGetValue(key, out var element))
                 {
                     return element;
                 }
@@ -95,6 +96,14 @@ namespace LibCraftopia.Registry
             if (elements.ContainsKey(key))
             {
                 throw new ArgumentException($"The key, {key}, already exists.", "key");
+            }
+            if (keyIdDict.TryGetRight(key, out var savedId))
+            {
+                if(value.Id != savedId)
+                {
+                    Logger.Inst.LogWarning($"Register({Name}): try to register key={key} with id={value.Id}, but the key already exists with the different id={savedId}. Maybe the original game have been updated.");
+                    keyIdDict.RemoveLeft(key);
+                }
             }
             if (keyIdDict.TryGetLeft(value.Id, out var savedKey))
             {
@@ -141,17 +150,34 @@ namespace LibCraftopia.Registry
         IEnumerator IRegistry.Init()
         {
             Logger.Inst.LogInfo($"Register({Name}): initialize start.");
-            var enumerator = handler.Init(this);
-            while (enumerator.MoveNext()) yield return enumerator.Current;
+            yield return handler.Init(this);
             Logger.Inst.LogInfo($"Register({Name}): initialize end.");
         }
 
         IEnumerator IRegistry.Apply()
         {
             Logger.Inst.LogInfo($"Register({Name}): applying to the game starts.");
-            var enumerator = handler.Apply(elements.Values);
-            while (enumerator.MoveNext()) yield return enumerator.Current;
+            yield return handler.Apply(elements.Values);
+            yield return detectUnknownKeys();
             Logger.Inst.LogInfo($"Register({Name}): applying to the game ends.");
+        }
+
+        private IEnumerator detectUnknownKeys()
+        {
+            var task = Task.Run(() =>
+            {
+                var unknownKeys = new List<string>();
+                foreach (var key in keyIdDict.Lefts)
+                {
+                    if (!elements.ContainsKey(key)) unknownKeys.Add(key);
+                }
+                foreach (var key in unknownKeys)
+                {
+                    keyIdDict.RemoveLeft(key);
+                    Logger.Inst.LogWarning($"The key, ${key}, was stored in the registry but has not been registered by both the main game and mods. Deleted from the registry.");
+                }
+            }).LogError();
+            while (!task.IsCompleted && !task.IsCanceled) yield return new WaitForSeconds(0.1f);
         }
 
         private string Filename => $"{Name}.regist";

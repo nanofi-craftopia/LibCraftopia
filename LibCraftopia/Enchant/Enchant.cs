@@ -68,6 +68,7 @@ namespace LibCraftopia.Enchant
 
         public int Id { get => Inner.ID; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "id") = value; }
         public int Status { get => Inner.Status; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "status") = value; }
+        public int IsTreasureDropped { get => Inner.IsTreasureDropped; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "isTreasureDropped") = value; }
         public EnchantRarity Rarity { get => Inner.Rarity; set => AccessTools.FieldRefAccess<SoEnchantment, EnchantRarity>(Inner, "rarity") = value; }
         public int LimitedCategoryId { get => Inner.LimitedCategoryId; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "limitedCategoryId") = value; }
         public int PassiveSkillId { get => Inner.EquipmentPassiveSkillId; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "equipmentPassiveSkillId") = value; }

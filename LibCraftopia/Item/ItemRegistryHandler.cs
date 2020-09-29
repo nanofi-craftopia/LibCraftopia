@@ -66,10 +66,19 @@ namespace LibCraftopia.Item
                 var list = new List<Tuple<string, ItemData>>(all.Length);
                 foreach (var item in all)
                 {
-                    var key = item.IsEnabled ? LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey() ?? item.Id.ToString() : item.Id.ToString();
+                    string key = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey();
+                    if (key == null)
+                    {
+                        key = item.Id.ToString();
+                    }
+                    else if (!item.IsEnabled)
+                    {
+                        key += $"#{item.Id}";
+                    }
                     counts.Increment(key);
                     list.Add(Tuple.Create(key, item));
                 }
+                var unique = new Dictionary<string, int>();
                 foreach (var tuple in list)
                 {
                     var key = tuple.Item1;
@@ -78,7 +87,8 @@ namespace LibCraftopia.Item
                     {
                         var jpName = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {item.Id}, {key}, {jpName}");
-                        key += item.Id.ToString();
+                        unique.Increment(key);
+                        key += $"-{unique[key]}";
                     }
                     registry.RegisterVanilla(key, item);
                 }

@@ -32,8 +32,7 @@ namespace LibCraftopia.Registry
                 {
                     yield return new WaitForSeconds(0.1f);
                 }
-                var enumerator = registry.Init();
-                while (enumerator.MoveNext()) yield return enumerator.Current;
+                yield return registry.Init();
             }
             Initialized = true;
             yield break;
@@ -45,18 +44,13 @@ namespace LibCraftopia.Registry
             {
                 if (!registry.IsGameDependent)
                 {
-                    var enumerator = registry.Apply();
-                    while (enumerator.MoveNext()) yield return enumerator.Current;
+                    yield return registry.Apply();
                     Directory.CreateDirectory(baseDir);
                     var task = registry.Save(baseDir);
                     while (!task.IsCompleted && !task.IsCanceled)
                     {
                         yield return new WaitForSeconds(0.1f);
                     }
-                }
-                else
-                {
-                    yield return null;
                 }
             }
         }

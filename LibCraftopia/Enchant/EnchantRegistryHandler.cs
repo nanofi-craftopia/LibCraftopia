@@ -88,6 +88,7 @@ namespace LibCraftopia.Enchant
                     counts.Increment(key);
                     list.Add(Tuple.Create(key, enchant));
                 }
+                var unique = new Dictionary<string, int>();
                 foreach (var tuple in list)
                 {
                     var key = tuple.Item1;
@@ -96,7 +97,8 @@ namespace LibCraftopia.Enchant
                     {
                         var jpName = LocalizationHelper.Inst.GetEnchantDisplayName(enchant.ID, LocalizationHelper.Japanese);
                         Logger.Inst.LogWarning($"Confliction: {enchant.ID}, {key}, {jpName}");
-                        key += enchant.ID.ToString();
+                        unique.Increment(key);
+                        key += $"-{unique[key]}";
                     }
                     registry.RegisterVanilla(key, enchant);
                 }
