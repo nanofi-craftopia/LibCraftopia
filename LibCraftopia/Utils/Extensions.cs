@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
 using UnityEngine;
+using LibCraftopia.Registry;
 
 namespace LibCraftopia.Utils
 {
@@ -76,6 +77,40 @@ namespace LibCraftopia.Utils
                 }
                 yield return self.Current;
             }
+        }
+
+        internal static Task RegisterVanillaElements<T>(this Registry<T> registry, IEnumerable<T> elements, Func<T, string> keyGen, Func<T, object> conflictInfo = null) where T : IRegistryEntry
+        {
+            return Task.Run(() =>
+            {
+                var counts = new Dictionary<string, int>();
+                var list = new List<Tuple<string, T>>();
+                foreach (var elem in elements)
+                {
+                    string key = keyGen(elem);
+                    counts.Increment(key);
+                    list.Add(Tuple.Create(key, elem));
+                }
+                var unique = new Dictionary<string, int>();
+                foreach (var tuple in list)
+                {
+                    var key = tuple.Item1;
+                    var elem = tuple.Item2;
+                    if(counts[key] > 1)
+                    {
+                        var info = conflictInfo?.Invoke(elem); 
+                        Logger.Inst.LogWarning($"Confliction: {elem.Id}, {key}, {info}");
+                        unique.Increment(key);
+                        key += $"-{unique[key]}";
+                    }
+                    registry.RegisterVanilla(key, elem);
+                }
+            }).LogError();
+        }
+
+        public static IEnumerator AsCoroutine(this Task task, float sec = 0.1f)
+        {
+            while (!task.IsCompleted && !task.IsCanceled) yield return new WaitForSeconds(sec);
         }
     }
 }

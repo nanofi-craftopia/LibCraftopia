@@ -30,17 +30,13 @@ namespace LibCraftopia.Item
 
         public IEnumerator Apply(ICollection<ItemFamily> elements)
         {
-            var task = Task.Run(() =>
+            yield return Task.Run(() =>
             {
                 var all = elements.Select(e => (SoItemFamily)e).ToArray();
                 var itemManager = OcItemDataMng.Inst;
                 var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
                 AccessTools.FieldRefAccess<SoDataList<SoItemFamilyList, SoItemFamily>, SoItemFamily[]>(familyList, "all") = all;
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            }).LogError().AsCoroutine();
             OcItemUI_CraftMng.Inst.UpdatePlayerCarftableItem();
         }
 
@@ -48,36 +44,9 @@ namespace LibCraftopia.Item
         {
             var itemManager = OcItemDataMng.Inst;
             var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
-            var task = Task.Run(() =>
-            {
-                var all = familyList.GetAll();
-                var counts = new Dictionary<string, int>();
-                var list = new List<Tuple<string, SoItemFamily>>(all.Length);
-                foreach (var family in all)
-                {
-                    string key = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.English)?.ToValidKey() ?? family.FamilyId.ToString();
-                    counts.Increment(key);
-                    list.Add(Tuple.Create(key, family));
-                }
-                var unique = new Dictionary<string, int>();
-                foreach (var tuple in list)
-                {
-                    var key = tuple.Item1;
-                    var family = tuple.Item2;
-                    if (counts[key] > 1)
-                    {
-                        var jpName = LocalizationHelper.Inst.GetItemFamily(family.FamilyId, LocalizationHelper.Japanese);
-                        Logger.Inst.LogWarning($"Confliction: {family.FamilyId}, {key}, {jpName}");
-                        unique.Increment(key);
-                        key += $"-{unique[key]}";
-                    }
-                    registry.RegisterVanilla(key, family);
-                }
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            yield return registry.RegisterVanillaElements(familyList.GetAll().Select(e => (ItemFamily)e), 
+                family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.English)?.ToValidKey() ?? family.Id.ToString(), 
+                family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.Japanese)).AsCoroutine();
         }
 
         public void OnRegister(string key, int id, ItemFamily value)

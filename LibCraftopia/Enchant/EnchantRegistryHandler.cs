@@ -30,7 +30,7 @@ namespace LibCraftopia.Enchant
 
         public IEnumerator Apply(ICollection<Enchant> elements)
         {
-            var task = Task.Run(() =>
+            yield return Task.Run(() =>
             {
                 var all = elements.Select(e => (SoEnchantment)e).ToArray();
                 AccessTools.FieldRefAccess<SoDataList<SoEnchantDataList, SoEnchantment>, SoEnchantment[]>(OcResidentData.EnchantDataList, "all") = all;
@@ -45,11 +45,7 @@ namespace LibCraftopia.Enchant
                         EnchantHelper.Inst.TreeRandomDrop[enchant.Id] = enchant.ProbInTreeDrop;
                     EnchantHelper.Inst.SpecifiedEnemyDrop[enchant.Id] = enchant.ProbInEnemyDrop;
                 }
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            }).LogError().AsCoroutine();
         }
 
         private void setupTreasureProb(ICollection<Enchant> elements)
@@ -76,37 +72,11 @@ namespace LibCraftopia.Enchant
 
         public IEnumerator Init(Registry<Enchant> registry)
         {
-            var task = Task.Run(() =>
-            {
-                var enchantList = OcResidentData.EnchantDataList;
-                var all = enchantList.GetAll();
-                var counts = new Dictionary<string, int>();
-                var list = new List<Tuple<string, SoEnchantment>>(all.Length);
-                foreach (var enchant in all)
-                {
-                    var key = LocalizationHelper.Inst.GetEnchantDisplayName(enchant.ID, LocalizationHelper.English)?.ToValidKey() ?? enchant.ID.ToString();
-                    counts.Increment(key);
-                    list.Add(Tuple.Create(key, enchant));
-                }
-                var unique = new Dictionary<string, int>();
-                foreach (var tuple in list)
-                {
-                    var key = tuple.Item1;
-                    var enchant = tuple.Item2;
-                    if (counts[key] > 1)
-                    {
-                        var jpName = LocalizationHelper.Inst.GetEnchantDisplayName(enchant.ID, LocalizationHelper.Japanese);
-                        Logger.Inst.LogWarning($"Confliction: {enchant.ID}, {key}, {jpName}");
-                        unique.Increment(key);
-                        key += $"-{unique[key]}";
-                    }
-                    registry.RegisterVanilla(key, enchant);
-                }
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            var enchantList = OcResidentData.EnchantDataList;
+            var all = enchantList.GetAll();
+            yield return registry.RegisterVanillaElements(all.Select(e => (Enchant)e),
+                enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.English)?.ToValidKey() ?? enchant.Id.ToString(),
+                enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.Japanese)).AsCoroutine();
         }
 
         public void OnRegister(string key, int id, Enchant value)

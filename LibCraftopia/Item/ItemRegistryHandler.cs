@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using EnhancedScrollerDemos.MainMenu;
+using HarmonyLib;
 using I2.Loc;
 using LibCraftopia.Helper;
 using LibCraftopia.Registry;
@@ -32,7 +33,7 @@ namespace LibCraftopia.Item
 
         public IEnumerator Apply(ICollection<Item> elements)
         {
-            var task = Task.Run(() =>
+            yield return Task.Run(() =>
             {
                 var all = elements.Select(e => (ItemData)e).ToArray();
                 var valid = all.Where(e => e.IsEnabled).ToArray();
@@ -48,55 +49,27 @@ namespace LibCraftopia.Item
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
                 var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = fille;
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+            }).LogError().AsCoroutine();
         }
 
         public IEnumerator Init(Registry<Item> registry)
         {
             var itemManager = OcItemDataMng.Inst;
             var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
-            var task = Task.Run(() =>
+            yield return registry.RegisterVanillaElements(itemList.GetAll().Select(e => (Item)e), item =>
             {
-                var all = itemList.GetAll();
-                var counts = new Dictionary<string, int>();
-                var list = new List<Tuple<string, ItemData>>(all.Length);
-                foreach (var item in all)
+                string key = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey();
+                if (key == null)
                 {
-                    string key = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey();
-                    if (key == null)
-                    {
-                        key = item.Id.ToString();
-                    }
-                    else if (!item.IsEnabled)
-                    {
-                        key += $"#{item.Id}";
-                    }
-                    counts.Increment(key);
-                    list.Add(Tuple.Create(key, item));
+                    key = item.Id.ToString();
                 }
-                var unique = new Dictionary<string, int>();
-                foreach (var tuple in list)
+                else if (!item.IsEnabled)
                 {
-                    var key = tuple.Item1;
-                    var item = tuple.Item2;
-                    if (counts[key] > 1)
-                    {
-                        var jpName = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese);
-                        Logger.Inst.LogWarning($"Confliction: {item.Id}, {key}, {jpName}");
-                        unique.Increment(key);
-                        key += $"-{unique[key]}";
-                    }
-                    registry.RegisterVanilla(key, item);
+                    key += $"#{item.Id}";
                 }
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+                return key;
+
+            }, item => LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese)).AsCoroutine();
         }
 
         public void OnRegister(string key, int id, Item value)

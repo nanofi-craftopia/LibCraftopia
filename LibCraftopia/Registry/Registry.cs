@@ -164,7 +164,7 @@ namespace LibCraftopia.Registry
 
         private IEnumerator detectUnknownKeys()
         {
-            var task = Task.Run(() =>
+            yield return Task.Run(() =>
             {
                 var unknownKeys = new List<string>();
                 foreach (var key in keyIdDict.Lefts)
@@ -174,10 +174,9 @@ namespace LibCraftopia.Registry
                 foreach (var key in unknownKeys)
                 {
                     keyIdDict.RemoveLeft(key);
-                    Logger.Inst.LogWarning($"The key, ${key}, was stored in the registry but has not been registered by both the main game and mods. Deleted from the registry.");
+                    Logger.Inst.LogWarning($"The key, {key}, was stored in the registry but has not been registered by both the main game and mods. Deleted from the registry.");
                 }
-            }).LogError();
-            while (!task.IsCompleted && !task.IsCanceled) yield return new WaitForSeconds(0.1f);
+            }).LogError().AsCoroutine();
         }
 
         private string Filename => $"{Name}.regist";

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using LibCraftopia.Loading;
+using LibCraftopia.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,11 +28,7 @@ namespace LibCraftopia.Registry
         {
             foreach (var registry in registries.Values)
             {
-                var task = registry.Load(baseDir);
-                while (!task.IsCompleted && !task.IsCanceled)
-                {
-                    yield return new WaitForSeconds(0.1f);
-                }
+                yield return registry.Load(baseDir).AsCoroutine();
                 yield return registry.Init();
             }
             Initialized = true;
@@ -46,11 +43,7 @@ namespace LibCraftopia.Registry
                 {
                     yield return registry.Apply();
                     Directory.CreateDirectory(baseDir);
-                    var task = registry.Save(baseDir);
-                    while (!task.IsCompleted && !task.IsCanceled)
-                    {
-                        yield return new WaitForSeconds(0.1f);
-                    }
+                    yield return registry.Save(baseDir).AsCoroutine();
                 }
             }
         }
@@ -61,13 +54,8 @@ namespace LibCraftopia.Registry
             {
                 if (registry.IsGameDependent)
                 {
-                    var enumerator = registry.Apply();
-                    while (enumerator.MoveNext()) yield return enumerator.Current;
-                    var task = registry.Save(baseDir);
-                    while (!task.IsCompleted && !task.IsCanceled)
-                    {
-                        yield return new WaitForSeconds(0.1f);
-                    }
+                    yield return registry.Apply();
+                    yield return registry.Save(baseDir).AsCoroutine();
                 }
             }
         }
