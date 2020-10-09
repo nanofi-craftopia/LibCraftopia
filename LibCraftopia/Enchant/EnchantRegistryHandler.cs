@@ -34,7 +34,7 @@ namespace LibCraftopia.Enchant
             {
                 var all = elements.Select(e => (SoEnchantment)e).ToArray();
                 AccessTools.FieldRefAccess<SoDataList<SoEnchantDataList, SoEnchantment>, SoEnchantment[]>(OcResidentData.EnchantDataList, "all") = all;
-                setupTreasureProb(elements);
+                // setupTreasureProb(elements);
                 foreach (var enchant in elements)
                 {
                     if (enchant.ProbInRandomDrop > 0.0f)
@@ -55,16 +55,18 @@ namespace LibCraftopia.Enchant
             var probSums = AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, "rarityChestProbSums");
             for (int i = 0; i < EnchantHelper.Inst.MaxRarity; i++)
             {
-                ref var probs = ref AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i + 1}ChestProbs");
-                var origin = probs;
-                probs = new float[maxId + 1];
-                origin.CopyTo(probs, 0);
+                ref var probs = ref AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i}ChestProbs");
+                probs = new float[elements.Count];
                 float sum = 0;
-                foreach (var enchant in elements.Where(e => e.ProbInTreasureBox != null))
+                int idx = 0;
+                foreach (var enchant in elements)
                 {
-                    var prob = enchant.ProbInTreasureBox[i];
-                    probs[enchant.Id] = prob;
-                    sum += prob;
+                    if (enchant.ProbsInTreasureBox == null) continue;
+                    var p = enchant.ProbsInTreasureBox[i];
+                    if (!(p > 0)) continue;
+                    probs[idx] = p;
+                    sum += p;
+                    idx++;
                 }
                 probSums[i] += sum;
             }
@@ -74,7 +76,18 @@ namespace LibCraftopia.Enchant
         {
             var enchantList = OcResidentData.EnchantDataList;
             var all = enchantList.GetAll();
-            yield return registry.RegisterVanillaElements(all.Select(e => (Enchant)e),
+            var chestProbs = new List<float[]>();
+            for (int i = 0; i < EnchantHelper.Inst.MaxRarity; i++)
+            {
+                var p = AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i}ChestProbs");
+                chestProbs.Add(p);
+            }
+            yield return registry.RegisterVanillaElements(all.Select((e, i) =>
+            {
+                var enchant = (Enchant)e;
+                enchant.ProbsInTreasureBox = chestProbs.Select(p => p[i]).ToArray();
+                return enchant;
+            }),
                 enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.English)?.ToValidKey() ?? enchant.Id.ToString(),
                 enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.Japanese)).AsCoroutine();
         }

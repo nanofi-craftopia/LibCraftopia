@@ -79,18 +79,18 @@ namespace LibCraftopia.Enchant
             get => ref AccessTools.FieldRefAccess<SoEnchantment, float>(Inner, effect.ToString());
         }
 
-        private float[] probInTreasureBoxes;
+        private float[] probsInTreasureBox;
         /// <summary>
         /// Probabilities that items obtained from treasure chests have this enchantment. The length of this property corresponds to the number of rarity types the treasure chest can have, which can be obtained from `EnchantHelper.Inst.MaxRarity`. 
         /// </summary>
-        public float[] ProbInTreasureBox
+        public float[] ProbsInTreasureBox
         {
-            get => probInTreasureBoxes;
+            get => probsInTreasureBox;
             set
             {
                 if (value != null && value.Length != EnchantHelper.Inst.MaxRarity)
                     throw new ArgumentException($"ProbInTreasureBox must be a float arrray with length {EnchantHelper.Inst.MaxRarity}, but the assigned value's length was {value.Length}.", "value");
-                probInTreasureBoxes = value;
+                probsInTreasureBox = value;
             }
         }
         /// <summary>

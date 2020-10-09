@@ -49,14 +49,50 @@ namespace LibCraftopia.Item
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
                 var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = fille;
+                setupTreasureProb(elements);
             }).LogError().AsCoroutine();
+        }
+
+        private void setupTreasureProb(ICollection<Item> elements)
+        {
+            var itemManager = OcItemDataMng.Inst;
+            var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
+            var probSums = AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, "rarityChestProbSums");
+            for (int i = 0; i < ItemHelper.Inst.MaxRarity; i++)
+            {
+                ref var probs = ref AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
+                probs = new float[elements.Count];
+                float sum = 0;
+                int idx = 0;
+                foreach (var item in elements)
+                {
+                    if (item.ProbsInTreasureBox == null) continue;
+                    var p = item.ProbsInTreasureBox[i];
+                    if (!(p > 0)) continue;
+                    probs[idx] = p;
+                    sum += p;
+                    idx++;
+                }
+                probSums[i] += sum;
+            }
         }
 
         public IEnumerator Init(Registry<Item> registry)
         {
             var itemManager = OcItemDataMng.Inst;
             var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
-            yield return registry.RegisterVanillaElements(itemList.GetAll().Select(e => (Item)e), item =>
+            var chestProbs = new List<float[]>();
+            for (int i = 0; i < ItemHelper.Inst.MaxRarity; i++)
+            {
+                var p = AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
+                chestProbs.Add(p);
+            }
+            yield return registry.RegisterVanillaElements(itemList.GetAll().Select((e, i) =>
+            {
+                var item = (Item)e;
+                item.ProbsInTreasureBox = chestProbs.Select(p => p[i]).ToArray();
+                return item;
+            }), item =>
             {
                 string key = LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.English)?.ToValidKey();
                 if (key == null)

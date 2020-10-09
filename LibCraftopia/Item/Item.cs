@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using JetBrains.Annotations;
 using LibCraftopia.Container;
+using LibCraftopia.Helper;
 using LibCraftopia.Registry;
 using MapMagic;
 using Oc;
@@ -84,6 +85,24 @@ namespace LibCraftopia.Item
         public OcPlPassiveSkillType PassiveSkillType { get => Inner.PassiveSkillType; set => AccessTools.FieldRefAccess<ItemData, OcPlPassiveSkillType>(Inner, "passiveSkillType") = value; }
 
         public IItemPutHandler PutHandler { get; set; }
+
+        private float[] probsInTreasureBox;
+        /// <summary>
+        /// Probabilities that items obtained from treasure chests have this enchantment. The length of this property corresponds to the number of rarity types the treasure chest can have, which can be obtained from `EnchantHelper.Inst.MaxRarity`. 
+        /// </summary>
+        public float[] ProbsInTreasureBox
+        {
+            get => probsInTreasureBox;
+            set
+            {
+                if (value != null && value.Length != ItemHelper.Inst.MaxRarity)
+                    throw new ArgumentException($"ProbInTreasureBox must be a float arrray with length {ItemHelper.Inst.MaxRarity}, but the assigned value's length was {value.Length}.", "value");
+                probsInTreasureBox = value;
+            }
+        }
+
+        public string DisplayName => Inner.DisplayName;
+        public string Description => Inner.Description;
 
         public bool IsEnabled { get => Inner.IsEnabled; }
         public bool IsAppearIngame { get => Inner.IsAppearIngame; }
