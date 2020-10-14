@@ -185,6 +185,7 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 # Changelog
 
+- 2020/10/15 v0.1.14 Fix bug in Random Item and Enchant, Leave chat command feature to the separate assembly, and add new field from alpha version
 - 2020/10/09 v0.1.13 Fix bug in Treasure box probs
 - 2020/09/30 v0.1.12 Bug fix
 - 2020/09/29 v0.1.11 Item put handler + Bug fix
