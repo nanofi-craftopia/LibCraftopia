@@ -19,4 +19,9 @@ To build this library, you need to place the following dlls on the `Libs` direct
 - UnityEngine.ImageConversionModule.dll
 - UnityEngine.UI.dll
 
+### Visual Studio Packages
 We use [GitInfo](https://www.nuget.org/packages/GitInfo/) for automatically configuring the assembly version and mod version from the git tag and commit history. 
+
+### NPM Packages for releasing
+
+We use [semantic-release](https://github.com/semantic-release/semantic-release) to release built assemblies to Github. 

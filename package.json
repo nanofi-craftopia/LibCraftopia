@@ -1,0 +1,28 @@
+{
+  "name": "libcraftopia",
+  "version": "1.0.0",
+  "description": "An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nanofi/LibCraftopia.git"
+  },
+  "author": "nanofi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nanofi/LibCraftopia/issues"
+  },
+  "homepage": "https://github.com/nanofi/LibCraftopia#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
