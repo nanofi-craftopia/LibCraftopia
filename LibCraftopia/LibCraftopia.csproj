@@ -9,6 +9,7 @@
 		<Copyright>Copyright (c) nanofi</Copyright>
 		<Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
 		<LangVersion>8.0</LangVersion>
+		<Configurations>Debug;Release;Package</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -45,4 +46,8 @@
 		</Reference>
 	</ItemGroup>
 
+	<Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+		<Message Text="Packaging $(ProjectName)"/>
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
+	</Target>
 </Project>
