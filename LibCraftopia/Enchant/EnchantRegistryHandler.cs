@@ -32,9 +32,10 @@ namespace LibCraftopia.Enchant
         {
             yield return Task.Run(() =>
             {
-                var all = elements.Select(e => (SoEnchantment)e).ToArray();
+                var enchants = elements.ToArray();
+                var all = enchants.Select(e => (SoEnchantment)e).ToArray();
                 AccessTools.FieldRefAccess<SoDataList<SoEnchantDataList, SoEnchantment>, SoEnchantment[]>(OcResidentData.EnchantDataList, "all") = all;
-                // setupTreasureProb(elements);
+                 setupTreasureProb(enchants);
                 foreach (var enchant in elements)
                 {
                     if (enchant.ProbInRandomDrop > 0.0f)
@@ -48,7 +49,7 @@ namespace LibCraftopia.Enchant
             }).LogError().AsCoroutine();
         }
 
-        private void setupTreasureProb(ICollection<Enchant> elements)
+        private void setupTreasureProb(IList<Enchant> elements)
         {
             var enchantList = OcResidentData.EnchantDataList;
             var maxId = elements.Select(e => e.Id).Max();
@@ -58,17 +59,17 @@ namespace LibCraftopia.Enchant
                 ref var probs = ref AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i}ChestProbs");
                 probs = new float[elements.Count];
                 float sum = 0;
-                int idx = 0;
-                foreach (var enchant in elements)
+                for (int j = 0; j < elements.Count; j++)
                 {
+                    var enchant = elements[j];
                     if (enchant.ProbsInTreasureBox == null) continue;
                     var p = enchant.ProbsInTreasureBox[i];
                     if (!(p > 0)) continue;
-                    probs[idx] = p;
+                    probs[j] = p;
                     sum += p;
-                    idx++;
+
                 }
-                probSums[i] += sum;
+                probSums[i] = sum;
             }
         }
 

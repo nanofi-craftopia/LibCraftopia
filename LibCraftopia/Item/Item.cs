@@ -7,7 +7,9 @@ using MapMagic;
 using Oc;
 using Oc.Item;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -61,6 +63,11 @@ namespace LibCraftopia.Item
         public float RestoreMana { get => Inner.RestoreMana; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "restoreMana") = value; }
         public float RestoreSatiety { get => Inner.RestoreSatiety; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "restoreSatiety") = value; }
         public float AddStamina { get => Inner.AddStamina; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "addStamina") = value; }
+        public float BuffMaxHp { get => Inner.BuffMaxHp; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "buffMaxHealth") = value; }
+        public float BuffMaxMp { get => Inner.BuffMaxMp; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "buffMaxMana") = value; }
+        public float BuffAtk { get => Inner.BuffAtk; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "buffAtk") = value; }
+        public float BuffMatk { get => Inner.BuffMatk; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "buffMatk") = value; }
+        public float BuffDef { get => Inner.BuffDef; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "buffDef") = value; }
 
         public int ATK { get => Inner.ATK; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "atk") = value; }
         public ref int ATKIncreasePerLevel { get => ref AccessTools.FieldRefAccess<ItemData, int>(Inner, "atkIncreasePerLv"); }
@@ -83,6 +90,62 @@ namespace LibCraftopia.Item
         public OcItemPrefab ItemPrefab { get => Inner.ItemPrefab; set => AccessTools.FieldRefAccess<ItemData, OcItemPrefab>(Inner, "itemPrefab") = value; }
         public OcPlActiveSkillType ActiveSkillType { get => Inner.ActiveSkillType; set => AccessTools.FieldRefAccess<ItemData, OcPlActiveSkillType>(Inner, "activeSkillType") = value; }
         public OcPlPassiveSkillType PassiveSkillType { get => Inner.PassiveSkillType; set => AccessTools.FieldRefAccess<ItemData, OcPlPassiveSkillType>(Inner, "passiveSkillType") = value; }
+
+        public class EnchantInfluencesModifier
+        {
+            private static readonly FieldInfo enchantInfluencesField = AccessTools.Field(typeof(ItemData), "enchantInfluences");
+            private ItemData inner;
+            public List<KeyValuePair<int, Sprite>> Icons { get; private set; } = new List<KeyValuePair<int, Sprite>>();
+            public EnchantInfluencesModifier(ItemData inner)
+            {
+                this.inner = inner;
+            }
+
+            public void Retrive()
+            {
+                Icons.Clear();
+                var arr = enchantInfluencesField.GetValue(inner) as IEnumerable;
+                var elemType = arr.GetType().GetElementType();
+                var fieldEnchantId = elemType.GetField("enchantId");
+                var fieldInfluence = elemType.GetField("influence");
+                var fieldChangedIcon = fieldInfluence.FieldType.GetField("changedIcon");
+                foreach (var val in arr)
+                {
+                    var enchantId = (int)fieldEnchantId.GetValue(val);
+                    var influence = fieldInfluence.GetValue(val);
+                    var changedIcon = (Sprite)fieldChangedIcon.GetValue(influence);
+                    Icons.Add(new KeyValuePair<int, Sprite>(enchantId, changedIcon));
+                }
+            }
+            public void Apply()
+            {
+                var elemType = enchantInfluencesField.FieldType.GetElementType();
+                var fieldEnchantId = elemType.GetField("enchantId");
+                var fieldInfluence = elemType.GetField("influence");
+                var fieldChangedIcon = fieldInfluence.FieldType.GetField("changedIcon");
+                var arr = Array.CreateInstance(elemType, Icons.Count);
+                for (int i = 0; i < Icons.Count; i++)
+                {
+                    var enchantIcon = Icons[i];
+                    var elem = Activator.CreateInstance(elemType);
+                    fieldEnchantId.SetValue(elem, enchantIcon.Key);
+                    var influence = Activator.CreateInstance(fieldInfluence.FieldType);
+                    fieldChangedIcon.SetValue(influence, enchantIcon.Value);
+                    fieldInfluence.SetValue(elem, influence);
+                    arr.SetValue(elem, i);
+                }
+                enchantInfluencesField.SetValue(inner, arr);
+            }
+        }
+        private EnchantInfluencesModifier enchantInfluences;
+        public EnchantInfluencesModifier EnchantInfluences
+        {
+            get
+            {
+                enchantInfluences ??= new EnchantInfluencesModifier(this.Inner);
+                return enchantInfluences;
+            }
+        }
 
         public IItemPutHandler PutHandler { get; set; }
 

@@ -35,7 +35,8 @@ namespace LibCraftopia.Item
         {
             yield return Task.Run(() =>
             {
-                var all = elements.Select(e => (ItemData)e).ToArray();
+                var items = elements.ToArray();
+                var all = items.Select(e => (ItemData)e).ToArray();
                 var valid = all.Where(e => e.IsEnabled).ToArray();
                 var appear = valid.Where(e => e.IsAppearIngame).ToArray();
                 var itemManager = OcItemDataMng.Inst;
@@ -49,11 +50,11 @@ namespace LibCraftopia.Item
                 AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
                 var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
                 AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = fille;
-                setupTreasureProb(elements);
+                setupTreasureProb(items);
             }).LogError().AsCoroutine();
         }
 
-        private void setupTreasureProb(ICollection<Item> elements)
+        private void setupTreasureProb(IList<Item> elements)
         {
             var itemManager = OcItemDataMng.Inst;
             var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
@@ -63,17 +64,16 @@ namespace LibCraftopia.Item
                 ref var probs = ref AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
                 probs = new float[elements.Count];
                 float sum = 0;
-                int idx = 0;
-                foreach (var item in elements)
+                for (int j = 0; j < elements.Count; i++)
                 {
+                    var item = elements[i];
                     if (item.ProbsInTreasureBox == null) continue;
                     var p = item.ProbsInTreasureBox[i];
                     if (!(p > 0)) continue;
-                    probs[idx] = p;
+                    probs[j] = p;
                     sum += p;
-                    idx++;
                 }
-                probSums[i] += sum;
+                probSums[i] = sum;
             }
         }
 

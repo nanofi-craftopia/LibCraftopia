@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using LibCraftopia.Chat;
 using LibCraftopia.Enchant;
 using LibCraftopia.Helper;
 using LibCraftopia.Hook;
@@ -23,7 +22,6 @@ namespace LibCraftopia
             harmony.PatchAll(typeof(LoadingPatch));
             harmony.PatchAll(typeof(ItemPatch));
             harmony.PatchAll(typeof(OcItemDropperPatch));
-            harmony.PatchAll(typeof(ChatCommandPatch));
             this.gameObject.AddComponent<Config>().Init(Config);
             this.gameObject.AddComponent<Logger>().Init(Logger);
         }
@@ -36,7 +34,6 @@ namespace LibCraftopia
             this.gameObject.AddComponent<EnchantHelper>();
             this.gameObject.AddComponent<ItemHelper>();
             this.gameObject.AddComponent<LocalizationHelper>();
-            this.gameObject.AddComponent<ChatCommandManager>();
 
             LoadingManager.Inst.InitializeLoaders.Add(0, setupRegistries);
         }
