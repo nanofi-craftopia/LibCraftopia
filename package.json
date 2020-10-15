@@ -2,13 +2,16 @@
   "name": "libcraftopia",
   "version": "1.0.0",
   "description": "An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)",
-  "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "cz-conventional-changelog": "^3.3.0"
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "commitizen": "^4.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "semantic-release": "^17.2.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node Scripts/build.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +27,30 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "release": {
+    "ci": false,
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      ["@semantic-release/changelog", {
+        "changelogFile": "CHANGELOG.md"
+      }],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "Package/*.dll",
+              "label": "Assemblies"
+            }
+          ]
+        }
+      ],
+      ["@semantic-release/git", {
+        "assets": ["CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }]
+    ]
   }
 }
