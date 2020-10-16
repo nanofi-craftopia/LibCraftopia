@@ -14,7 +14,7 @@ namespace LibCraftopia.Helper
     {
         protected override void OnUnityAwake()
         {
-            MaxRarity = AccessTools.StaticFieldRefAccess<SoEnchantDataList, int>("MaxRarity");
+            MaxRarity = AccessTools.StaticFieldRefAccess<SoItemDataList, int>("MaxRarity");
 
             itemDataMngTraverse = new Traverse(OcItemDataMng.Inst);
             itemList = itemDataMngTraverse.Field<SoItemDataList>("SoItemDataList").Value;
