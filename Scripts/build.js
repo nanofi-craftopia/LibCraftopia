@@ -1,6 +1,6 @@
 const fs = require('fs');
-const { spawn } = require('child_process');
 const slash = require('slash');
+const { spawnSync } = require('child_process');
 
 var ideTypes = {
   Pro: 'Professional',
@@ -71,19 +71,7 @@ if(msbuild === undefined) {
 }
 msbuild = slash(msbuild);
 
-console.log(msbuild);
-// const ps = spawn(msbuild, ['LibCraftopia.sln', '/t:rebuild', '/p:Configuration=Release']);
-const ps = spawn("powershell.exe", ["-Command", `chcp 65001; & "${msbuild}" LibCraftopia.sln /t:rebuild /p:Configuration=Release`])
-
-ps.stdout.on('data', (data) => {
-  console.error(`stdout: ${data}`);
-});
-
-ps.stderr.on('data', (data) => {
-  console.error(`stderr: ${data}`);
-});
-
-ps.on('close', (code) => {
-  console.log(`Build complete with ${code}`);
-});
-
+const ps = spawnSync(msbuild, ['LibCraftopia.sln', '/t:rebuild', '/p:Configuration=Release']);
+// const ps = spawn("powershell.exe", ["-Command", `chcp 65001; & "${msbuild}" LibCraftopia.sln /t:rebuild /p:Configuration=Release`])
+console.warn(ps.status);
+console.warn(ps.stdout.toString("utf-8"));

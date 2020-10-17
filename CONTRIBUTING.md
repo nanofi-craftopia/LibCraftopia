@@ -25,3 +25,5 @@ We use [GitInfo](https://www.nuget.org/packages/GitInfo/) for automatically conf
 ### NPM Packages for releasing
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to release built assemblies to Github. 
+
+Note: the LTS and latest version of nodejs (12.19.0 and 14.14.0) seems to have a bug in executing a process in a windows environment. I use the nightly version to avoid that. 

@@ -41,9 +41,12 @@
           "changelogFile": "CHANGELOG.md"
         }
       ],
-      ["@semantic-release/npm", {
-        "npmPublish": false
-      }],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
       [
         "@semantic-release/git",
         {
@@ -57,7 +60,7 @@
       [
         "@semantic-release/exec",
         {
-          "publishCmd": "node ./Scripts/build.js 1>&2"
+          "publishCmd": "node ./Scripts/build.js"
         }
       ],
       [
@@ -65,8 +68,7 @@
         {
           "assets": [
             {
-              "path": "Package/*.dll",
-              "label": "Assemblies"
+              "path": "Package/*.dll"
             }
           ]
         }
