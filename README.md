@@ -2,6 +2,7 @@
 An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
 
 [![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.dll)
+[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.Chat.dll)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nanofi/LibCraftopia?include_prereleases)](https://github.com/nanofi/LibCraftopia/releases/latest)
 [![GitHub](https://img.shields.io/github/license/nanofi/LibCraftopia)](https://github.com/nanofi/LibCraftopia/blob/master/LICENSE)
 
@@ -10,12 +11,20 @@ An unofficial modding library for Craftopia (https://store.steampowered.com/app/
 This is a mod library based on BepInEx. Follow the install instruction of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/user_guide/installation/index.html. Also, follow the tutorial of BepInEx, https://bepinex.github.io/bepinex_docs/master/articles/dev_guide/plugin_tutorial/index.html, to create your BepInEx mod.
 
 
-Download the `LibCraftopia.dll` from the above download badge and add a reference to the downloaded dll file to your project. Then, add the `BepInDependency` attribute  to your plug-in class.
+Download the `LibCraftopia.dll` from the above download badge and add a reference to the downloaded dll file to your project. Then, add the `BepInDependency` attribute to your plug-in class.
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
 [BepInDependency("com.craftopia.mod.LibCraftopia", BepInDependency.DependencyFlags.HardDependency)] // Add this!
 ```
+
+We provide the chat command feature with a separate and standalone dll. Download the `LibCraftopia.Chat.dll` from the above download badge and add a reference to the downloaded dll file to your project. Then, add the `BepInDependency` attribute to your plug-in class.
+```csharp
+[BepInPlugin("your guid", "your mod name", "your mod version")]
+[BepInDependency("com.craftopia.mod.LibCraftopiaChat", BepInDependency.DependencyFlags.HardDependency)] // Add this!
+```
+Note that `LibCraftopia.Chat.dll` works without `LibCraftopia.dll`.
+
 # Usage
 
 # Initialization
