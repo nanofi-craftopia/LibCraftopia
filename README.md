@@ -2,7 +2,7 @@
 An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
 
 [![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.dll)
-[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.Chat.dll)
+[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.Chat.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.Chat.dll)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nanofi/LibCraftopia?include_prereleases)](https://github.com/nanofi/LibCraftopia/releases/latest)
 [![GitHub](https://img.shields.io/github/license/nanofi/LibCraftopia)](https://github.com/nanofi/LibCraftopia/blob/master/LICENSE)
 
