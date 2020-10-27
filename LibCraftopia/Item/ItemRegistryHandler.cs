@@ -64,7 +64,7 @@ namespace LibCraftopia.Item
                 ref var probs = ref AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
                 probs = new float[elements.Count];
                 float sum = 0;
-                for (int j = 0; j < elements.Count; i++)
+                for (int j = 0; j < elements.Count; j++)
                 {
                     var item = elements[i];
                     if (item.ProbsInTreasureBox == null) continue;
