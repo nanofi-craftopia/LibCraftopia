@@ -71,7 +71,7 @@ if(msbuild === undefined) {
 }
 msbuild = slash(msbuild);
 
-const ps = spawnSync(msbuild, ['LibCraftopia.sln', '/t:rebuild', '/p:Configuration=Release']);
-// const ps = spawn("powershell.exe", ["-Command", `chcp 65001; & "${msbuild}" LibCraftopia.sln /t:rebuild /p:Configuration=Release`])
+// const ps = spawnSync(msbuild, ['LibCraftopia.sln', '/t:rebuild', '/p:Configuration=Release']);
+const ps = spawnSync("powershell.exe", ["-Command", `chcp 65001; & "${msbuild}" LibCraftopia.sln /t:rebuild /p:Configuration=Release`])
 console.warn(ps.status);
 console.warn(ps.stdout.toString("utf-8"));
