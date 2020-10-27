@@ -80,8 +80,14 @@ namespace LibCraftopia.Item
         public int RegistFireLevel { get => Inner.RegistFireLv; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "registFireLv") = value; }
         public int RegistColdLevel { get => Inner.RegistColdLv; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "registColdLv") = value; }
         public int RegistPoisonLevel { get => Inner.RegistPoisonLv; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "registPoisonLv") = value; }
-        public int PassiveSkillId { get => Inner.EquipmentPassiveSkillId; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillId") = value; }
-        public int PassiveSkillLevel { get => Inner.EquipmentPassiveSkillLevel; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillLevel") = value; }
+        public int PassiveSkillId1 { get => Inner.EquipmentPassiveSkillId1; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillId1") = value; }
+        public int PassiveSkillLevel1 { get => Inner.EquipmentPassiveSkillLevel1; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillLevel1") = value; }
+        public int PassiveSkillId2 { get => Inner.EquipmentPassiveSkillId2; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillId2") = value; }
+        public int PassiveSkillLevel2 { get => Inner.EquipmentPassiveSkillLevel2; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillLevel2") = value; }
+        public int PassiveSkillId3 { get => Inner.EquipmentPassiveSkillId3; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillId3") = value; }
+        public int PassiveSkillLevel3 { get => Inner.EquipmentPassiveSkillLevel3; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillLevel3") = value; }
+        public int PassiveSkillId4 { get => Inner.EquipmentPassiveSkillId4; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillId4") = value; }
+        public int PassiveSkillLevel4 { get => Inner.EquipmentPassiveSkillLevel4; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentPassiveSkillLevel4") = value; }
         public int ActiveSkillId { get => Inner.EquipmentActiveSkillId; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentActiveSkillId") = value; }
         public int ActiveSkillLevel { get => Inner.EquipmentActiveSkillLevel; set => AccessTools.FieldRefAccess<ItemData, int>(Inner, "equipmentActiveSkillLevel") = value; }
         public float ExtraValueA { get => Inner.ExtraValue_A; set => AccessTools.FieldRefAccess<ItemData, float>(Inner, "extraValue_A") = value; }
