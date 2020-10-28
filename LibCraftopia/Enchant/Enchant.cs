@@ -51,6 +51,8 @@ namespace LibCraftopia.Enchant
         modify_AtkAnimal,
         modify_DamageCut,
         modify_JumpCount,
+        modify_IncreaseAtkByDefRate,
+        modify_IncreaseMAtkByDefRate,
         modify_PriceRate,
         use_RestoreHealth,
         use_RestoreMana,
