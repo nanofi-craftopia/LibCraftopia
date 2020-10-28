@@ -1,3 +1,11 @@
+## [0.1.17](https://github.com/nanofi/LibCraftopia/compare/v0.1.16...v0.1.17) (2020-10-28)
+
+
+### Bug Fixes
+
+* add new added two modifier for enchants ([c3fd5d6](https://github.com/nanofi/LibCraftopia/commit/c3fd5d67ef74f1020d9584c4420b0c4cdf195258))
+* latest change in alpha: an item has now at most four passible skills instead of one ([27515ed](https://github.com/nanofi/LibCraftopia/commit/27515ed8058bb8bf3000a59f5b0251fe870574b4))
+
 ## [0.1.16](https://github.com/nanofi/LibCraftopia/compare/v0.1.15...v0.1.16) (2020-10-27)
 
 
