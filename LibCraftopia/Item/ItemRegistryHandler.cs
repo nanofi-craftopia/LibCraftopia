@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,7 +67,7 @@ namespace LibCraftopia.Item
                 float sum = 0;
                 for (int j = 0; j < elements.Count; j++)
                 {
-                    var item = elements[i];
+                    var item = elements[j];
                     if (item.ProbsInTreasureBox == null) continue;
                     var p = item.ProbsInTreasureBox[i];
                     if (!(p > 0)) continue;
