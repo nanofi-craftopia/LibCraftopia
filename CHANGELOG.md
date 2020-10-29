@@ -1,3 +1,10 @@
+## [0.1.18](https://github.com/nanofi/LibCraftopia/compare/v0.1.17...v0.1.18) (2020-10-29)
+
+
+### Bug Fixes
+
+* fix a bug in random item probability ([98ef0ec](https://github.com/nanofi/LibCraftopia/commit/98ef0ec1fc3ea961c4fbbee0efcf7ccf8364686c))
+
 ## [0.1.17](https://github.com/nanofi/LibCraftopia/compare/v0.1.16...v0.1.17) (2020-10-28)
 
 
