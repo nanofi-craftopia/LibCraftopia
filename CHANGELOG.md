@@ -1,3 +1,10 @@
+## [0.1.19](https://github.com/nanofi/LibCraftopia/compare/v0.1.18...v0.1.19) (2020-10-30)
+
+
+### Bug Fixes
+
+* fix for a change in the latest alpha ([f061498](https://github.com/nanofi/LibCraftopia/commit/f061498c016486cd9f5ea53fe33f438ea132ebdc))
+
 ## [0.1.18](https://github.com/nanofi/LibCraftopia/compare/v0.1.17...v0.1.18) (2020-10-29)
 
 
