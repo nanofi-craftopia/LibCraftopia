@@ -43,15 +43,8 @@ namespace LibCraftopia.Item
                 var itemManager = OcItemDataMng.Inst;
                 var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
                 AccessTools.FieldRefAccess<SoDataList<SoItemDataList, ItemData>, ItemData[]>(itemList, "all") = all;
-                AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "validItemDataList") = valid;
-                AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "appearIngameItemDataList") = appear;
-                AccessTools.Method(typeof(OcItemDataMng), "SetupCraftableItems").Invoke(itemManager, new object[] { });
-                AccessTools.Method(typeof(OcItemDataMng), "SetupCraftBenchMap").Invoke(itemManager, new object[] { });
-                AccessTools.Method(typeof(OcItemDataMng), "SetupFamilyMap").Invoke(itemManager, new object[] { });
-                AccessTools.Method(typeof(OcItemDataMng), "SetupCategoryMap").Invoke(itemManager, new object[] { });
-                var fille = itemManager.GetFamilyItems(40712).OrderBy(e => e.Price).ToArray();
-                AccessTools.FieldRefAccess<OcItemDataMng, ItemData[]>(itemManager, "_FilletDataList") = fille;
                 setupTreasureProb(items);
+                AccessTools.Method(typeof(OcItemDataMng), "OnUnityAwake").Invoke(itemManager, new object[] { });
             }).LogError().AsCoroutine();
         }
 
