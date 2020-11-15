@@ -75,6 +75,7 @@ namespace LibCraftopia.Enchant
         public int LimitedCategoryId { get => Inner.LimitedCategoryId; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "limitedCategoryId") = value; }
         public int PassiveSkillId { get => Inner.EquipmentPassiveSkillId; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "equipmentPassiveSkillId") = value; }
         public int PassiveSkillLevel { get => Inner.EquipmentPassiveSkillLevel; set => AccessTools.FieldRefAccess<SoEnchantment, int>(Inner, "equipmentPassiveSkillLevel") = value; }
+        public bool CantWash { get => Inner.CantWash; set => AccessTools.FieldRefAccess<SoEnchantment, bool>(Inner, "cantWash") = value; }
 
         public ref float this[EnchantEffect effect]
         {
