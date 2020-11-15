@@ -25,7 +25,7 @@ namespace LibCraftopia.Enchant
 
         public EnchantRegistryHandler()
         {
-            UserMinId = Config.Inst.Bind("Enchant", "EnchantMinUserId", 200, "The minimum id of an enchant added by mod.").Value;
+            UserMinId = Config.Inst.Bind("Enchant", "EnchantMinUserId", 15000, "The minimum id of an enchant added by mod.").Value;
         }
 
         public IEnumerator Apply(ICollection<Enchant> elements)
