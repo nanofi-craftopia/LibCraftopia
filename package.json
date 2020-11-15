@@ -1,6 +1,6 @@
 {
   "name": "libcraftopia",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)",
   "private": true,
   "dependencies": {},

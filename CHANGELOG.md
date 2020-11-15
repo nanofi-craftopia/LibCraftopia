@@ -1,3 +1,11 @@
+## [0.1.20](https://github.com/nanofi/LibCraftopia/compare/v0.1.19...v0.1.20) (2020-11-15)
+
+
+### Bug Fixes
+
+* add CantWash property to enchant ([566b57c](https://github.com/nanofi/LibCraftopia/commit/566b57c3cdc0b7d3016a948b2b062d8fb510b5b1))
+* change the minimum enchant id to 15000; adding enchant in multi mode is no longer supported ([d7d4c1f](https://github.com/nanofi/LibCraftopia/commit/d7d4c1fb9a723597af3327d57fbf9135e3f4a8df))
+
 ## [0.1.19](https://github.com/nanofi/LibCraftopia/compare/v0.1.18...v0.1.19) (2020-10-30)
 
 
