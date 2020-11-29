@@ -11,7 +11,8 @@
 
 To build this library, you need to place the following dlls on the `Libs` directory, which can be found in the `Craftopia_Data/Managed` directory or `BeplnEx/core` directory.
 - 0Harmony.dll
-- Assembly-CSharp.dll
+- AD__Overcraft.dll
+- AD_External_i2.dll
 - BeplnEx.dll
 - BeplnEx.Harmony.dll
 - UnityEngine.CoreModule.dll

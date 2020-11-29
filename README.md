@@ -60,9 +60,9 @@ Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be calle
 
 # Registry
 
-A registry is a manager for game element, such as item, enchant, skill, enemy, and so on (currently, the item and enchant APIs are provided), by which we can keep the consistency of the added game elements' ids against update of the official game and mods. When adding a game element via the registry, you must specify a unique string as the game element's unique key instead of specifying the game element's id. The registry assigns unused id to the game element automatically and remembers the correspondences between the string and id. 
+A registry is a manager for game element, such as item, enchant, skill, enemy, and so on (currently, the item and enchant APIs are provided), by which we can keep the consistency of the added game elements' ids against update of the official game and mods. When adding a game element via the registry, you must specify a unique string as the game element's unique key instead of specifying the game element's id. The registry assigns an unused id to the game element automatically and remembers the correspondences between the string and id. 
 
-Accesses of the registry APIs must be done in coroutines added to the `InitializeLoaders` with priority grater than 20. What you should do first to access the registry APIs is obtaining a registry via `RegistryManager.GetRegistry<T>()`. For example, you can obtain an item registry as
+Accesses of the registry APIs must be done in coroutines added to the `InitializeLoaders` with a priority grater than 20. What you should do first to access the registry APIs is obtaining a registry via `RegistryManager.GetRegistry<T>()`. For example, you can obtain an item registry as
 ```csharp
 void Start() {
     LoadingManager.Inst.InitializeLoaders.Add(50, initCoroutine);
