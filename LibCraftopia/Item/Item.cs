@@ -180,7 +180,7 @@ namespace LibCraftopia.Item
         {
             Inner = ScriptableObject.CreateInstance<ItemData>();
             DebugStatus = 1;
-            MaxStack = 99;
+            MaxStack = 100;
             Price = 1;
             Rarity = 1;
             PlayerCraftCount = 1;
