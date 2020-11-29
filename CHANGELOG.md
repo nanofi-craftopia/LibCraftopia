@@ -1,3 +1,11 @@
+## [0.1.21](https://github.com/nanofi/LibCraftopia/compare/v0.1.20...v0.1.21) (2020-11-29)
+
+
+### Bug Fixes
+
+* change the default max stack to 100 as is in the latest alpha ([439c8b0](https://github.com/nanofi/LibCraftopia/commit/439c8b0ce2c37cc84a77b49d067ac34be3fb2abc))
+* fix for the split of the original assemblies ([bd6cc83](https://github.com/nanofi/LibCraftopia/commit/bd6cc8325121e017c2cf965956e93a29387ee0f6))
+
 ## [0.1.20](https://github.com/nanofi/LibCraftopia/compare/v0.1.19...v0.1.20) (2020-11-15)
 
 
