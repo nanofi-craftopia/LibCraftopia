@@ -1,5 +1,4 @@
-﻿using EnhancedScrollerDemos.MainMenu;
-using HarmonyLib;
+﻿using HarmonyLib;
 using I2.Loc;
 using LibCraftopia.Helper;
 using LibCraftopia.Registry;

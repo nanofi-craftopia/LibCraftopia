@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 using LibCraftopia.Container;
 using LibCraftopia.Helper;
 using LibCraftopia.Registry;
-using MapMagic;
 using Oc;
 using Oc.Item;
 using System;

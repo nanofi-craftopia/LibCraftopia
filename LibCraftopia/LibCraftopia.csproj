@@ -23,8 +23,11 @@
 		<Reference Include="0Harmony">
 			<HintPath>..\Libs\0Harmony.dll</HintPath>
 		</Reference>
-		<Reference Include="Assembly-CSharp">
-			<HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
+		<Reference Include="AD_External_i2">
+		  <HintPath>..\Libs\AD_External_i2.dll</HintPath>
+		</Reference>
+		<Reference Include="AD__Overcraft">
+		  <HintPath>..\Libs\AD__Overcraft.dll</HintPath>
 		</Reference>
 		<Reference Include="BepInEx">
 			<HintPath>..\Libs\BepInEx.dll</HintPath>
@@ -47,7 +50,7 @@
 	</ItemGroup>
 
 	<Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-		<Message Text="Packaging $(ProjectName)"/>
+		<Message Text="Packaging $(ProjectName)" />
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
 	</Target>
 </Project>
