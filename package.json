@@ -69,7 +69,7 @@
         {
           "assets": [
             {
-              "path": "Package/*.dll"
+              "path": "Package/*"
             }
           ]
         }
