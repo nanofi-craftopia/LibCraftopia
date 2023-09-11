@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/nanofi/LibCraftopia/compare/v0.1.21...v0.2.0) (2023-09-11)
+
+
+### Features
+
+* Overhaul initialization system ([303d4cb](https://github.com/nanofi/LibCraftopia/commit/303d4cb368982cd6ee3b0ab03340fc4f8cf17b9d))
+
 ## [0.1.21](https://github.com/nanofi/LibCraftopia/compare/v0.1.20...v0.1.21) (2020-11-29)
 
 
