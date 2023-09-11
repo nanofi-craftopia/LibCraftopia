@@ -1,56 +1,77 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-		<Authors>nanofi</Authors>
-		<Copyright>Copyright (c) nanofi</Copyright>
-		<Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
-		<LangVersion>8.0</LangVersion>
-		<Configurations>Debug;Release;Package</Configurations>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="GitInfo" Version="2.0.37">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="0Harmony">
-			<HintPath>..\Libs\0Harmony.dll</HintPath>
-		</Reference>
-		<Reference Include="AD_External_i2">
-		  <HintPath>..\Libs\AD_External_i2.dll</HintPath>
-		</Reference>
-		<Reference Include="AD__Overcraft">
-		  <HintPath>..\Libs\AD__Overcraft.dll</HintPath>
-		</Reference>
-		<Reference Include="BepInEx">
-			<HintPath>..\Libs\BepInEx.dll</HintPath>
-		</Reference>
-		<Reference Include="BepInEx.Harmony">
-			<HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine">
-			<HintPath>..\Libs\UnityEngine.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.ImageConversionModule">
-			<HintPath>..\Libs\UnityEngine.ImageConversionModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.UI">
-			<HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
-		</Reference>
-	</ItemGroup>
-
-	<Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-		<Message Text="Packaging $(ProjectName)" />
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
-	</Target>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <Authors>nanofi</Authors>
+    <Copyright>Copyright (c) nanofi</Copyright>
+    <Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
+    <LangVersion>8.0</LangVersion>
+    <Configurations>Debug;Release;Asset;Package</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\Libs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="AD_External_i2">
+      <HintPath>..\Libs\AD_External_i2.dll</HintPath>
+    </Reference>
+    <Reference Include="AD_PpLib">
+      <HintPath>..\Libs\AD_PpLib.dll</HintPath>
+    </Reference>
+    <Reference Include="AD__Overcraft">
+      <HintPath>..\Libs\AD__Overcraft.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\Libs\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirror">
+      <HintPath>..\Libs\Mirror.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>..\Libs\UniTask.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask.Linq">
+      <HintPath>..\Libs\UniTask.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\Libs\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\Libs\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>..\Libs\UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\Libs\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Target Name="Asset" BeforeTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="&quot;C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Unity.exe&quot; -batchmode -quit -projectPath &quot;$(SolutionDir)LibCraftopia.Asset&quot; -executeMethod &quot;AssetBundleBuild.BuildAssetBundles&quot;" />
+  </Target>
+  <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <Message Text="Packaging $(ProjectName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
+    <Copy SourceFiles="$(SolutionDir)LibCraftopia.Asset\Build\AssetBundles\libcraftopia.splash.scene" DestinationFolder="$(SolutionDir)Package" />
+  </Target>
 </Project>

@@ -342,3 +342,5 @@ healthchecksdb
 *.dll
 
 node/
+
+Package/

@@ -1,5 +1,6 @@
-﻿using HarmonyLib;
-using LibCraftopia.Helper;
+﻿using Cysharp.Threading.Tasks;
+using HarmonyLib;
+using LibCraftopia.Localization;
 using LibCraftopia.Registry;
 using LibCraftopia.Utils;
 using Oc;
@@ -16,47 +17,34 @@ namespace LibCraftopia.Enchant
 {
     public class EnchantRegistryHandler : IRegistryHandler<Enchant>
     {
-        public int MaxId => byte.MaxValue;
+        public int MaxId => short.MaxValue;
 
         public int MinId => 0;
         public int UserMinId { get; }
-
-        public bool IsGameDependent => false;
 
         public EnchantRegistryHandler()
         {
             UserMinId = Config.Inst.Bind("Enchant", "EnchantMinUserId", 15000, "The minimum id of an enchant added by mod.").Value;
         }
 
-        public IEnumerator Apply(ICollection<Enchant> elements)
+        public UniTask Apply(ICollection<Enchant> elements)
         {
-            yield return Task.Run(() =>
-            {
-                var enchants = elements.ToArray();
-                var all = enchants.Select(e => (SoEnchantment)e).ToArray();
-                AccessTools.FieldRefAccess<SoDataList<SoEnchantDataList, SoEnchantment>, SoEnchantment[]>(OcResidentData.EnchantDataList, "all") = all;
-                 setupTreasureProb(enchants);
-                foreach (var enchant in elements)
-                {
-                    if (enchant.ProbInRandomDrop > 0.0f)
-                        EnchantHelper.Inst.UnspecifiedEnemyDrop[enchant.Id] = enchant.ProbInRandomDrop;
-                    if (enchant.ProbInStoneDrop > 0.0f)
-                        EnchantHelper.Inst.StoneRandomDrop[enchant.Id] = enchant.ProbInStoneDrop;
-                    if (enchant.ProbInTreeDrop > 0.0f)
-                        EnchantHelper.Inst.TreeRandomDrop[enchant.Id] = enchant.ProbInTreeDrop;
-                    EnchantHelper.Inst.SpecifiedEnemyDrop[enchant.Id] = enchant.ProbInEnemyDrop;
-                }
-            }).LogError().AsCoroutine();
+            return UniTask.RunOnThreadPool(() =>
+           {
+               var enchants = elements.ToArray();
+               var all = enchants.Select(e => (SoEnchantment)e).ToArray();
+               EnchantList.Inst.All = all;
+               setupTreasureProb(enchants);
+           }).LogError();
         }
 
         private void setupTreasureProb(IList<Enchant> elements)
         {
-            var enchantList = OcResidentData.EnchantDataList;
             var maxId = elements.Select(e => e.Id).Max();
-            var probSums = AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, "rarityChestProbSums");
-            for (int i = 0; i < EnchantHelper.Inst.MaxRarity; i++)
+            var probSums = EnchantList.Inst.RarityChestProbSums;
+            for (int i = 0; i < EnchantList.Inst.MaxRarity; i++)
             {
-                ref var probs = ref AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i}ChestProbs");
+                ref var probs = ref EnchantList.Inst.RefRarityChestProbs(i);
                 probs = new float[elements.Count];
                 float sum = 0;
                 for (int j = 0; j < elements.Count; j++)
@@ -73,24 +61,21 @@ namespace LibCraftopia.Enchant
             }
         }
 
-        public IEnumerator Init(Registry<Enchant> registry)
+        public async UniTask Init(Registry<Enchant> registry)
         {
-            var enchantList = OcResidentData.EnchantDataList;
-            var all = enchantList.GetAll();
             var chestProbs = new List<float[]>();
-            for (int i = 0; i < EnchantHelper.Inst.MaxRarity; i++)
+            for (int i = 0; i < EnchantList.Inst.MaxRarity; i++)
             {
-                var p = AccessTools.FieldRefAccess<SoEnchantDataList, float[]>(enchantList, $"rarity{i}ChestProbs");
-                chestProbs.Add(p);
+                chestProbs.Add(EnchantList.Inst.RefRarityChestProbs(i));
             }
-            yield return registry.RegisterVanillaElements(all.Select((e, i) =>
+            await registry.RegisterVanillaElements(EnchantList.Inst.All.Select((e, i) =>
             {
                 var enchant = (Enchant)e;
                 enchant.ProbsInTreasureBox = chestProbs.Select(p => p[i]).ToArray();
                 return enchant;
             }),
                 enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.English)?.ToValidKey() ?? enchant.Id.ToString(),
-                enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.Japanese)).AsCoroutine();
+                enchant => LocalizationHelper.Inst.GetEnchantDisplayName(enchant.Id, LocalizationHelper.Japanese));
         }
 
         public void OnRegister(string key, int id, Enchant value)

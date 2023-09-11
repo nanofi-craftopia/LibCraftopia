@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -10,11 +11,10 @@ namespace LibCraftopia.Registry
         int MaxId { get; }
         int MinId { get; }
         int UserMinId { get; }
-        bool IsGameDependent { get; }
 
         void OnRegister(string key, int id, T value);
         void OnUnregister(string key, int id);
-        IEnumerator Init(Registry<T> registry);
-        IEnumerator Apply(ICollection<T> elements);
+        UniTask Init(Registry<T> registry);
+        UniTask Apply(ICollection<T> elements);
     }
 }

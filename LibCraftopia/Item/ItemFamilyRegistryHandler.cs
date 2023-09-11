@@ -1,5 +1,6 @@
-﻿using HarmonyLib;
-using LibCraftopia.Helper;
+﻿using Cysharp.Threading.Tasks;
+using HarmonyLib;
+using LibCraftopia.Localization;
 using LibCraftopia.Registry;
 using LibCraftopia.Utils;
 using Oc;
@@ -28,25 +29,20 @@ namespace LibCraftopia.Item
             UserMinId = Config.Inst.Bind("Item", "ItemFamilyMinUserId", 1000000, "The minimum id jof an item item family added by mod.").Value;
         }
 
-        public IEnumerator Apply(ICollection<ItemFamily> elements)
+        public UniTask Apply(ICollection<ItemFamily> elements)
         {
-            yield return Task.Run(() =>
+            return UniTask.RunOnThreadPool(() =>
             {
                 var all = elements.Select(e => (SoItemFamily)e).ToArray();
-                var itemManager = OcItemDataMng.Inst;
-                var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
-                AccessTools.FieldRefAccess<SoDataList<SoItemFamilyList, SoItemFamily>, SoItemFamily[]>(familyList, "all") = all;
-            }).LogError().AsCoroutine();
-            OcItemUI_CraftMng.Inst.UpdatePlayerCarftableItem();
+                ItemManager.Inst.ItemFamilyList.All = all;
+            }).LogError();
         }
 
-        public IEnumerator Init(Registry<ItemFamily> registry)
+        public UniTask Init(Registry<ItemFamily> registry)
         {
-            var itemManager = OcItemDataMng.Inst;
-            var familyList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemFamilyList>(itemManager, "SoItemFamilyList");
-            yield return registry.RegisterVanillaElements(familyList.GetAll().Select(e => (ItemFamily)e), 
-                family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.English)?.ToValidKey() ?? family.Id.ToString(), 
-                family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.Japanese)).AsCoroutine();
+            return registry.RegisterVanillaElements(ItemManager.Inst.ItemFamilyList.All.Select(e => (ItemFamily)e),
+               family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.English)?.ToValidKey() ?? family.Id.ToString(),
+               family => LocalizationHelper.Inst.GetItemFamily(family.Id, LocalizationHelper.Japanese));
         }
 
         public void OnRegister(string key, int id, ItemFamily value)

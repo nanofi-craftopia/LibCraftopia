@@ -1,14 +1,15 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using LibCraftopia.Enchant;
-using LibCraftopia.Helper;
-using LibCraftopia.Hook;
+using LibCraftopia.Localization;
 using LibCraftopia.Item;
-using LibCraftopia.Loading;
 using LibCraftopia.Registry;
+using Oc;
 using System;
 using System.Collections;
 using System.Reflection;
+using LibCraftopia.Startup;
+using LibCraftopia.Initialize;
 
 namespace LibCraftopia
 {
@@ -17,33 +18,22 @@ namespace LibCraftopia
     {
         void Awake()
         {
-            var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
-            harmony.PatchAll(typeof(GlobalHook));
-            harmony.PatchAll(typeof(LoadingPatch));
-            harmony.PatchAll(typeof(ItemPatch));
-            harmony.PatchAll(typeof(OcItemDropperPatch));
             this.gameObject.AddComponent<Config>().Init(Config);
             this.gameObject.AddComponent<Logger>().Init(Logger);
-        }
+            var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
+            harmony.PatchAll();
 
-
-        void Start()
-        {
-            this.gameObject.AddComponent<LoadingManager>();
-            this.gameObject.AddComponent<RegistryManager>();
-            this.gameObject.AddComponent<EnchantHelper>();
-            this.gameObject.AddComponent<ItemHelper>();
+            this.gameObject.AddComponent<StartupManager>();
             this.gameObject.AddComponent<LocalizationHelper>();
-
-            LoadingManager.Inst.InitializeLoaders.Add(0, setupRegistries);
+            this.gameObject.AddComponent<InitializeManager>();
+            this.gameObject.AddComponent<RegistryManager>();
         }
 
-        private IEnumerator setupRegistries(bool needStabilization)
+        private void Start()
         {
             RegistryManager.Inst.CreateRegistry(new ItemFamilyRegistryHandler());
             RegistryManager.Inst.CreateRegistry(new ItemRegistryHandler());
             RegistryManager.Inst.CreateRegistry(new EnchantRegistryHandler());
-            yield break;
         }
     }
 }

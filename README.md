@@ -2,7 +2,6 @@
 An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)
 
 [![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.dll)
-[![GitHub Releases (by Asset)](https://img.shields.io/github/downloads/nanofi/LibCraftopia/latest/LibCraftopia.Chat.dll)](https://github.com/nanofi/LibCraftopia/releases/latest/download/LibCraftopia.Chat.dll)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nanofi/LibCraftopia?include_prereleases)](https://github.com/nanofi/LibCraftopia/releases/latest)
 [![GitHub](https://img.shields.io/github/license/nanofi/LibCraftopia)](https://github.com/nanofi/LibCraftopia/blob/master/LICENSE)
 
@@ -17,13 +16,6 @@ Download the `LibCraftopia.dll` from the above download badge and add a referenc
 [BepInPlugin("your guid", "your mod name", "your mod version")]
 [BepInDependency("com.craftopia.mod.LibCraftopia", BepInDependency.DependencyFlags.HardDependency)] // Add this!
 ```
-
-We provide the chat command feature with a separate and standalone dll. Download the `LibCraftopia.Chat.dll` from the above download badge and add a reference to the downloaded dll file to your project. Then, add the `BepInDependency` attribute to your plug-in class.
-```csharp
-[BepInPlugin("your guid", "your mod name", "your mod version")]
-[BepInDependency("com.craftopia.mod.LibCraftopiaChat", BepInDependency.DependencyFlags.HardDependency)] // Add this!
-```
-Note that `LibCraftopia.Chat.dll` works without `LibCraftopia.dll`.
 
 # Usage
 
@@ -143,51 +135,6 @@ enchant.ProbInRandomDrop = 0.3f;
 enchantRegistry.Register("myenchant.MyEnchant", enchant);
 ```
 
-# Add a chat command
-
-```csharp
-ChatCommandManager.Inst.Commands.Add(new MyCommand());
-```
-where `MyCommand` class is implemented as
-```csharp
-        private class MyCommand : IChatCommandWithSubs
-        {
-            private class HelloCommand : IChatCommand
-            {
-                public string Command => "hello";
-                public void Invoke(string[] args)
-                {
-                    ChatCommandManager.Inst.PopMessage("Hello: {0}", args.Join());
-                }
-
-            }
-            public string Command => "mycommand";
-
-            public void Invoke(string[] args)
-            {
-                ChatCommandManager.Inst.PopMessage("Usage: mycommand (hello)");
-            }
-
-            public IChatCommand Subcommand(string command)
-            {
-                switch (command)
-                {
-                    case "hello": return new HelloCommand();
-                    default: return null; // MyCommand.Invoke will be called
-                }
-            }
-        }
-```
-
-In the game, entering `/mycommand` in the chat input will show
-```
-Usage: mycommand (hello)
-```
-Entering `/mycommand hello this is a test "this is a test"` will show
-```
-Hello: this, is, a, test, this is a test
-```
-
 # Remark
 
 You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx. 
@@ -196,5 +143,3 @@ You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx.
 
 See [CHANGELOG.md](CHANGELOG.md)
 
-# Acknowledgements
-- mituha : The chat command feature is inspired from https://github.com/mituha/CraftopiaPlugins/blob/main/ConsoleCommandsPlugin/ConsoleCommandPlugin.cs

@@ -3,28 +3,33 @@
 
 ## Pull Request
 
-- I'd like to keep LibCraftopia merely as a library so that this library by itself does not make a dramatic change into the game. Of course, this library can have features to change the game dramatically, whereas the change must be done by mod developers who use this library. Please allow me to reject your PR by this reason. 
-- You should be aware before submitting PR that your code will publish under the MIT license after accepting your PR.
+- I intend to maintain LibCraftopia strictly as a library, ensuring that it doesn't introduce significant alterations to the game by itself. While the library can certainly offer features capable of dramatic game changes, the implementation of such changes should be the responsibility of mod developers who utilize this library. For this reason, I must decline your pull request.
+- Before submitting your pull request, please be aware that your code will be published under the MIT license once your pull request is accepted.
 
 
 ## Development
 
-To build this library, you need to place the following dlls on the `Libs` directory, which can be found in the `Craftopia_Data/Managed` directory or `BeplnEx/core` directory.
+To build this library, place the required DLL files in the Libs folder, which is located either in the `Craftopia_Data/Managed` directory or the `BepInEx/core` directory.
 - 0Harmony.dll
 - AD__Overcraft.dll
 - AD_External_i2.dll
+- AD_PpLib.dll
 - BeplnEx.dll
 - BeplnEx.Harmony.dll
 - UnityEngine.CoreModule.dll
 - UnityEngine.dll
 - UnityEngine.ImageConversionModule.dll
 - UnityEngine.UI.dll
+- UnityEngine.UIElementsModule.dll
+- UnityEngine.AssetBundleModule.dll
+- UnityEngine.UnityWebRequestModule.dll
+- Mirror.dll
+- UniTask.dll
+- UniTask.Linq.dll
 
 ### Visual Studio Packages
-We use [GitInfo](https://www.nuget.org/packages/GitInfo/) for automatically configuring the assembly version and mod version from the git tag and commit history. 
+We utilize [GitInfo](https://www.nuget.org/packages/GitInfo/) to automatically configure both the assembly version and module version based on git tags and commit history.
 
 ### NPM Packages for releasing
 
-We use [semantic-release](https://github.com/semantic-release/semantic-release) to release built assemblies to Github. 
-
-Note: the LTS and latest version of nodejs (12.19.0 and 14.14.0) seems to have a bug in executing a process in a windows environment. I use the nightly version to avoid that. 
+We utilize [semantic-release](https://github.com/semantic-release/semantic-release) to publish built assemblies on GitHub.

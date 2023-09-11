@@ -1,4 +1,5 @@
-﻿using LibCraftopia.Container;
+﻿using Cysharp.Threading.Tasks;
+using LibCraftopia.Container;
 using LibCraftopia.Utils;
 using Oc.Em;
 using System;
@@ -13,17 +14,6 @@ using UnityEngine;
 
 namespace LibCraftopia.Registry
 {
-    public interface IRegistry
-    {
-        bool IsGameDependent { get; }
-
-        IEnumerator Init();
-        IEnumerator Apply();
-
-        Task Load(string baseDir);
-        Task Save(string baseDir);
-    }
-
     public class Registry<T> : IRegistry where T : IRegistryEntry
     {
         private readonly IRegistryHandler<T> handler;
@@ -35,7 +25,6 @@ namespace LibCraftopia.Registry
         public int MinId { get => handler.MinId; }
         public int MaxId { get => handler.MaxId; }
         public int UserMinId { get => handler.UserMinId; }
-        bool IRegistry.IsGameDependent { get => handler.IsGameDependent; }
 
         public ICollection<T> Elements { get => elements.Values; }
 
@@ -90,6 +79,33 @@ namespace LibCraftopia.Registry
             }
             return default(T);
         }
+        internal UniTask RegisterVanillaElements(IEnumerable<T> elements, Func<T, string> keyGen, Func<T, object> conflictInfo = null)
+        {
+            return UniTask.RunOnThreadPool(() => {
+                var counts = new Dictionary<string, int>();
+                var list = new List<Tuple<string, T>>();
+                foreach (var elem in elements)
+                {
+                    string key = keyGen(elem);
+                    counts.Increment(key);
+                    list.Add(Tuple.Create(key, elem));
+                }
+                var unique = new Dictionary<string, int>();
+                foreach (var tuple in list)
+                {
+                    var key = tuple.Item1;
+                    var elem = tuple.Item2;
+                    if (counts[key] > 1)
+                    {
+                        var info = conflictInfo?.Invoke(elem);
+                        Logger.Inst.LogWarning($"Confliction: {elem.Id}, {key}, {info}");
+                        unique.Increment(key);
+                        key += $"-{unique[key]}";
+                    }
+                    this.RegisterVanilla(key, elem);
+                }
+            }).LogError();
+        }
 
         internal void RegisterVanilla(string key, T value)
         {
@@ -99,7 +115,7 @@ namespace LibCraftopia.Registry
             }
             if (keyIdDict.TryGetRight(key, out var savedId))
             {
-                if(value.Id != savedId)
+                if (value.Id != savedId)
                 {
                     Logger.Inst.LogWarning($"Register({Name}): try to register key={key} with id={value.Id}, but the key already exists with the different id={savedId}. Maybe the original game have been updated.");
                     keyIdDict.RemoveLeft(key);
@@ -147,24 +163,24 @@ namespace LibCraftopia.Registry
             return currentId;
         }
 
-        IEnumerator IRegistry.Init()
+        async UniTask IRegistry.Init()
         {
             Logger.Inst.LogInfo($"Register({Name}): initialize start.");
-            yield return handler.Init(this);
+            await handler.Init(this);
             Logger.Inst.LogInfo($"Register({Name}): initialize end.");
         }
 
-        IEnumerator IRegistry.Apply()
+        async UniTask IRegistry.Apply()
         {
-            Logger.Inst.LogInfo($"Register({Name}): applying to the game starts.");
-            yield return handler.Apply(elements.Values);
-            yield return detectUnknownKeys();
-            Logger.Inst.LogInfo($"Register({Name}): applying to the game ends.");
+            Logger.Inst.LogInfo($"Register({Name}): application starts.");
+            await handler.Apply(elements.Values);
+            await detectUnknownKeys();
+            Logger.Inst.LogInfo($"Register({Name}): application ends.");
         }
 
-        private IEnumerator detectUnknownKeys()
+        private UniTask detectUnknownKeys()
         {
-            yield return Task.Run(() =>
+            return UniTask.RunOnThreadPool(() =>
             {
                 var unknownKeys = new List<string>();
                 foreach (var key in keyIdDict.Lefts)
@@ -176,7 +192,7 @@ namespace LibCraftopia.Registry
                     keyIdDict.RemoveLeft(key);
                     Logger.Inst.LogWarning($"The key, {key}, was stored in the registry but has not been registered by both the main game and mods. Deleted from the registry.");
                 }
-            }).LogError().AsCoroutine();
+            }).LogError();
         }
 
         private string Filename => $"{Name}.regist";
@@ -184,9 +200,9 @@ namespace LibCraftopia.Registry
 
         private const int VERSION = 1;
 
-        Task IRegistry.Load(string baseDir)
+        UniTask IRegistry.Load(string baseDir)
         {
-            return Task.Run(() =>
+            return UniTask.RunOnThreadPool(() =>
             {
                 string path = Path.Combine(baseDir, Filename);
                 if (!File.Exists(path)) return;
@@ -230,9 +246,9 @@ namespace LibCraftopia.Registry
             }
         }
 
-        Task IRegistry.Save(string baseDir)
+        UniTask IRegistry.Save(string baseDir)
         {
-            return Task.Run(() =>
+            return UniTask.RunOnThreadPool(() =>
             {
                 string path = Path.Combine(baseDir, Filename);
                 using (var writer = new BinaryWriter(File.OpenWrite(path)))
@@ -245,7 +261,7 @@ namespace LibCraftopia.Registry
                         writer.Write(item.Value);
                     }
                 }
-            }).LogError();
+            });
         }
     }
 }

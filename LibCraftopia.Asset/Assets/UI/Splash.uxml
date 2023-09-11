@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgb(255, 255, 255);">
+        <ui:VisualElement name="VisualElement" style="align-items: center; justify-content: center; left: auto; top: auto; right: auto; bottom: auto; width: 100%; height: 100%; position: relative;">
+            <ui:Label text="LibCraftopia" display-tooltip-when-elided="true" name="Logo" style="font-size: 42px; -unity-font-style: normal;" />
+            <ui:ProgressBar value="0" title="Loading" name="Progress" style="width: 50%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

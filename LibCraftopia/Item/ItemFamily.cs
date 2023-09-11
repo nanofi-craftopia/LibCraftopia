@@ -12,7 +12,8 @@ namespace LibCraftopia.Item
     {
         private readonly SoItemFamily inner;
         public int Id { get => inner.pKey; set => inner.pKey = value; }
-        public ref string FamilyDesc { get => ref AccessTools.FieldRefAccess<SoItemFamily, string>(inner, "familyDesc"); }
+        public string FamilyDesc => inner.FamilyDesc;
+        public ref int ShopStorage { get => ref AccessTools.FieldRefAccess<SoItemFamily, int>(inner, "shopStorage"); }
         public ref Vector3 CameraPosition { get => ref inner.cameraPosition; }
         public ref Vector3 CameraRotation { get => ref inner.cameraRotation; }
         public float Fov { get => inner.fov; set => inner.fov = value; }

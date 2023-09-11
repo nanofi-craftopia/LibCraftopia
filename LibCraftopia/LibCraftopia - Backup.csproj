@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <Authors>nanofi</Authors>
+    <Copyright>Copyright (c) nanofi</Copyright>
+    <Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
+    <LangVersion>8.0</LangVersion>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <Message Text="Packaging $(ProjectName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
+    <Copy SourceFiles="$(SolutionDir)Asset\LibCraftopia.Asset\Build\AssetBundles\libcraftopia.splash.scene" DestinationFolder="$(SolutionDir)Package" />
+  </Target>
+</Project>

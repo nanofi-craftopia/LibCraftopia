@@ -1,6 +1,7 @@
-﻿using HarmonyLib;
+﻿using Cysharp.Threading.Tasks;
+using HarmonyLib;
 using I2.Loc;
-using LibCraftopia.Helper;
+using LibCraftopia.Localization;
 using LibCraftopia.Registry;
 using LibCraftopia.Utils;
 using Oc;
@@ -24,37 +25,29 @@ namespace LibCraftopia.Item
         public int MinId => 0;
         public int UserMinId { get; }
 
-        public bool IsGameDependent => false;
-
         public ItemRegistryHandler()
         {
             UserMinId = Config.Inst.Bind("Item", "ItemMinUserId", 15000, "The minimum id of an item added by mod.").Value;
         }
 
-        public IEnumerator Apply(ICollection<Item> elements)
+        public UniTask Apply(ICollection<Item> elements)
         {
-            yield return Task.Run(() =>
+            return UniTask.RunOnThreadPool(() =>
             {
                 var items = elements.ToArray();
                 var all = items.Select(e => (ItemData)e).ToArray();
-                var valid = all.Where(e => e.IsEnabled).ToArray();
-                var appear = valid.Where(e => e.IsAppearIngame).ToArray();
-                var itemManager = OcItemDataMng.Inst;
-                var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
-                AccessTools.FieldRefAccess<SoDataList<SoItemDataList, ItemData>, ItemData[]>(itemList, "all") = all;
+                ItemManager.Inst.ItemList.All = all;
                 setupTreasureProb(items);
-                AccessTools.Method(typeof(OcItemDataMng), "OnUnityAwake").Invoke(itemManager, new object[] { });
-            }).LogError().AsCoroutine();
+                ItemManager.Inst.InvokeOnUnityAwake();
+            }).LogError();
         }
 
         private void setupTreasureProb(IList<Item> elements)
         {
-            var itemManager = OcItemDataMng.Inst;
-            var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
-            var probSums = AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, "rarityChestProbSums");
-            for (int i = 0; i < ItemHelper.Inst.MaxRarity; i++)
+            var probSums = ItemManager.Inst.ItemList.RarityChestProbSums;
+            for (int i = 0; i < ItemManager.Inst.ItemList.MaxRank; i++)
             {
-                ref var probs = ref AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
+                ref var probs = ref ItemManager.Inst.ItemList.RefRarityChestProbs(i + 1);
                 probs = new float[elements.Count];
                 float sum = 0;
                 for (int j = 0; j < elements.Count; j++)
@@ -70,17 +63,14 @@ namespace LibCraftopia.Item
             }
         }
 
-        public IEnumerator Init(Registry<Item> registry)
+        public async UniTask Init(Registry<Item> registry)
         {
-            var itemManager = OcItemDataMng.Inst;
-            var itemList = AccessTools.FieldRefAccess<OcItemDataMng, SoItemDataList>(itemManager, "SoItemDataList");
             var chestProbs = new List<float[]>();
-            for (int i = 0; i < ItemHelper.Inst.MaxRarity; i++)
+            for (int i = 0; i < ItemManager.Inst.ItemList.MaxRank; i++)
             {
-                var p = AccessTools.FieldRefAccess<SoItemDataList, float[]>(itemList, $"rarity{i + 1}ChestProbs");
-                chestProbs.Add(p);
+                chestProbs.Add(ItemManager.Inst.ItemList.RefRarityChestProbs(i + 1));
             }
-            yield return registry.RegisterVanillaElements(itemList.GetAll().Select((e, i) =>
+            await registry.RegisterVanillaElements(ItemManager.Inst.ItemList.All.Select((e, i) =>
             {
                 var item = (Item)e;
                 item.ProbsInTreasureBox = chestProbs.Select(p => p[i]).ToArray();
@@ -98,7 +88,7 @@ namespace LibCraftopia.Item
                 }
                 return key;
 
-            }, item => LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese)).AsCoroutine();
+            }, item => LocalizationHelper.Inst.GetItemDisplayName(item.Id, LocalizationHelper.Japanese));
         }
 
         public void OnRegister(string key, int id, Item value)

@@ -3,14 +3,14 @@
   "version": "0.1.21",
   "description": "An unofficial modding library for Craftopia (https://store.steampowered.com/app/1307550/Craftopia/)",
   "private": true,
-  "dependencies": {},
   "devDependencies": {
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/exec": "^5.0.0",
-    "@semantic-release/git": "^9.0.0",
-    "commitizen": "^4.2.1",
-    "cz-conventional-changelog": "^3.3.0",
-    "semantic-release": "^17.2.1"
+    "@esm2cjs/slash": "^5.1.0",
+    "@semantic-release/changelog": "^6.0",
+    "@semantic-release/exec": "^6.0",
+    "@semantic-release/git": "^10.0",
+    "commitizen": "^4.3",
+    "cz-conventional-changelog": "^3.3",
+    "semantic-release": "^21.1"
   },
   "scripts": {
     "build": "node Scripts/build.js"
