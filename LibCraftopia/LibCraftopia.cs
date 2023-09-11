@@ -13,14 +13,16 @@ using LibCraftopia.Initialize;
 
 namespace LibCraftopia
 {
-    [BepInPlugin("com.craftopia.mod.LibCraftopia", "LibCraftopia", ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch + "." + ThisAssembly.Git.Commits)]
+    [BepInPlugin(LibCraftopia.GUID, "LibCraftopia", ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch + "." + ThisAssembly.Git.Commits)]
     public class LibCraftopia : BaseUnityPlugin
     {
+        public const string GUID = "com.craftopia.mod.LibCraftopia";
+
         void Awake()
         {
             this.gameObject.AddComponent<Config>().Init(Config);
             this.gameObject.AddComponent<Logger>().Init(Logger);
-            var harmony = new Harmony("com.craftopia.mod.LibCraftopia");
+            var harmony = new Harmony(GUID);
             harmony.PatchAll();
 
             this.gameObject.AddComponent<StartupManager>();

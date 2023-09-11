@@ -14,7 +14,7 @@ Download the `LibCraftopia.dll` from the above download badge and add a referenc
 
 ```csharp
 [BepInPlugin("your guid", "your mod name", "your mod version")]
-[BepInDependency("com.craftopia.mod.LibCraftopia", BepInDependency.DependencyFlags.HardDependency)] // Add this!
+[BepInDependency(LibCraftopia.LibCraftopia.GUID, BepInDependency.DependencyFlags.HardDependency)] // Add this!
 ```
 
 # Usage
@@ -23,47 +23,35 @@ Download the `LibCraftopia.dll` from the above download badge and add a referenc
 
 You can add your initialization procedure as follows:
 ```csharp
-void Start() {
-    LoadingManager.Inst.InitializeLoaders.Add(50, initCoroutine); // 10 is priority. Smaller coroutine will be called earlyer. 
-    LoadingManager.Inst.InitializeGameLoaders.Add(50, initGameCoroutine);
-    LoadingManager.Inst.AfterLoadLoaders.Add(50, loadedCoroutine);
-}
+public class YourMod : IInitializeHandler {
+    void Start() {
+        InitializeManager.Inst.AddHandler(InitializeManager.ModInit, this);
+    }
 
-private IEnumerator initCoroutine(bool needStabilization) {
-    // Do your initialization, e.g., add items and add enchants
-    // Note that this is coroutine
-    
-}
-
-private IEnumerator initGameCoroutine(bool needStabilization) {
-    // Do your initialization, e.g., add skills and add missions
-    // Some of the game contents, such as skill and mission, are destroyed when the game scene is destroyed (when going back to the title scene). 
-    // This means that if you want to modify these game contents, you need to modify them whenever the game scene is loaded.
-    // Coroutines added to `InitializeGameLoaders` will be called immediately after starting the game scene's loading. 
-    // Note that this is coroutine
-}
-
-private IEnumerator loadedCoroutine(bool needStabilization) {
-    // This coroutine will be called just after the end of scene load. 
+    public async UniTask Init(InitializeContext context) {
+        // Do your initialization
+    }
 }
 ```
 
-Coroutines added to `InitializeLoaders` or `InitializeGameLoaders` will be called during the loading scene. By appropriate implementation of the coroutines, we can avoid freezing the game application. The difference between `InitializeLoaders` and `InitializeGameLoaders` is that while coroutines added to `InitializeLoaders` will be called once the game scene is loaded, coroutines added to `InitializeGameLoaders` will be called each time the game scene is loaded. For example, when we go back to the title scene and start the game again, coroutines in `InitializeLoaders` are not called, whereas that in `InitializeGameLoaders` are called.
+`Init` method will be called during the startup initialization. `InitializeContext` can be used for controlling the information displayed in the startup scene.
 
 # Registry
 
 A registry is a manager for game element, such as item, enchant, skill, enemy, and so on (currently, the item and enchant APIs are provided), by which we can keep the consistency of the added game elements' ids against update of the official game and mods. When adding a game element via the registry, you must specify a unique string as the game element's unique key instead of specifying the game element's id. The registry assigns an unused id to the game element automatically and remembers the correspondences between the string and id. 
 
-Accesses of the registry APIs must be done in coroutines added to the `InitializeLoaders` with a priority grater than 20. What you should do first to access the registry APIs is obtaining a registry via `RegistryManager.GetRegistry<T>()`. For example, you can obtain an item registry as
+Accesses of the registry APIs must be done in `Init` method. What you should do first to access the registry APIs is obtaining a registry via `RegistryManager.GetRegistry<T>()`. For example, you can obtain an item registry as
 ```csharp
-void Start() {
-    LoadingManager.Inst.InitializeLoaders.Add(50, initCoroutine);
-}
+public class YourMod : IInitializeHandler {
+    void Start() {
+        InitializeManager.Inst.AddHandler(InitializeManager.ModInit, this);
+    }
 
-private IEnumerator initCoroutine(bool needStabilization) {
-    var itemRegistry = RegistryManager.Inst.GetRegistry<Item>();
+    public async UniTask Init(InitializeContext context) {
+        var itemRegistry = RegistryManager.Inst.GetRegistry<Item>();
 
-    // Add items
+        // Add items
+    }
 }
 ```
 
@@ -127,17 +115,8 @@ enchant.Rarity = Oc.Item.EnchantRarity.Rare;
 enchant.LimitedCategoryId = (int)EnchantLimitedCategory.Equipment;
 enchant[EnchantEffect.modify_Atk] = 100;
 enchant.ProbInTreasureBox = new float[] { 0, 0, 3, 3, 3};
-enchant.ProbInStoneDrop = 0.8f;
-enchant.ProbInTreeDrop = 0.8f;
-enchant.ProbInEnemyDrop[22] = 0.5f;
-enchant.ProbInEnemyDrop[23] = 0.1f;
-enchant.ProbInRandomDrop = 0.3f;
 enchantRegistry.Register("myenchant.MyEnchant", enchant);
 ```
-
-# Remark
-
-You must place `LibCraftopia.dll` on the `plugins` folder of BepInEx. 
 
 # Changelog
 
