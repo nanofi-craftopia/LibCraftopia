@@ -27,6 +27,7 @@ namespace LibCraftopia.Registry
         public int UserMinId { get => handler.UserMinId; }
 
         public ICollection<T> Elements { get => elements.Values; }
+        public IReadOnlyDictionary<string, T> KeyedElements { get => elements; }
 
         internal Registry(string name, IRegistryHandler<T> handler)
         {
@@ -81,7 +82,8 @@ namespace LibCraftopia.Registry
         }
         internal UniTask RegisterVanillaElements(IEnumerable<T> elements, Func<T, string> keyGen, Func<T, object> conflictInfo = null)
         {
-            return UniTask.RunOnThreadPool(() => {
+            return UniTask.RunOnThreadPool(() =>
+            {
                 var counts = new Dictionary<string, int>();
                 var list = new List<Tuple<string, T>>();
                 foreach (var elem in elements)
