@@ -8,7 +8,13 @@
     <Copyright>Copyright (c) nanofi</Copyright>
     <Description>An unofficial library for Craftopia. https://store.steampowered.com/app/1307550/Craftopia/</Description>
     <LangVersion>8.0</LangVersion>
-    <Configurations>Debug;Release;Asset;Package</Configurations>
+    <Configurations>Debug;Release</Configurations>
+    <UnityPath>C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Unity.exe</UnityPath>
+    <AssetDir>$(SolutionDir)LibCraftopia.Asset</AssetDir>
+    <AssetBuildDir>$(AssetDir)\Build\AssetBundles</AssetBuildDir>
+    <PackageDir>$(SolutionDir)Package\$(Configuration)\$(MSBuildProjectName)</PackageDir>
+    <PackageAssetDir>$(PackageDir)\assets</PackageAssetDir>
+    <PackagePluginDir>$(PackageDir)\plugins</PackagePluginDir>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="2.2.0">
@@ -67,11 +73,14 @@
     </Reference>
   </ItemGroup>
   <Target Name="Asset" BeforeTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-    <Exec Command="&quot;C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Unity.exe&quot; -batchmode -quit -projectPath &quot;$(SolutionDir)LibCraftopia.Asset&quot; -executeMethod &quot;AssetBundleBuild.BuildAssetBundles&quot;" />
+    <Exec Command="&quot;$(UnityPath)&quot; -batchmode -quit -projectPath &quot;$(AssetDir)&quot; -executeMethod &quot;AssetBundleBuild.BuildAssetBundles&quot;" />
   </Target>
-  <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-    <Message Text="Packaging $(ProjectName)" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)Package" />
-    <Copy SourceFiles="$(SolutionDir)LibCraftopia.Asset\Build\AssetBundles\libcraftopia.splash.scene" DestinationFolder="$(SolutionDir)Package" />
+  <Target Name="Package" AfterTargets="PostBuildEvent">
+    <Message Text="Packaging $(MSBuildProjectName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PackagePluginDir)" />
+    <Copy SourceFiles="$(AssetBuildDir)\libcraftopia.splash.scene" DestinationFolder="$(PackageAssetDir)" />
+  </Target>
+  <Target Name="PackageZip" AfterTargets="Package" Condition="'$(Configuration)' == 'Release'">
+    <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="$(PackageDir).zip" />
   </Target>
 </Project>

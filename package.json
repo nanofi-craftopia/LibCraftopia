@@ -69,7 +69,10 @@
         {
           "assets": [
             {
-              "path": "Package/*"
+              "path": "Package/Release/LibCraftopia.zip"
+            },
+            {
+              "path": "Package/Release/LibCraftopia/plugins/LibCraftopia.dll"
             }
           ]
         }

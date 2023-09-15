@@ -27,7 +27,7 @@ namespace LibCraftopia.Startup
         private async UniTask loadSplashScene()
         {
             var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var bundlePath = Path.Combine(assemblyDir, "libcraftopia.splash.scene");
+            var bundlePath = Path.Combine(assemblyDir, "../assets/libcraftopia.splash.scene");
             splashSceneBundle = await AssetBundle.LoadFromFileAsync(bundlePath);
 
             SceneManager.activeSceneChanged += onActiveSceneChanged;
