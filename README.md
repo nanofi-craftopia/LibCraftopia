@@ -25,7 +25,7 @@ You can add your initialization procedure as follows:
 ```csharp
 public class YourMod : IInitializeHandler {
     void Start() {
-        InitializeManager.Inst.AddHandler(InitializeManager.ModInit, this);
+        InitializeManager.Inst.AddHandler(InitializeManager.Init, this);
     }
 
     public async UniTask Init(InitializeContext context) {

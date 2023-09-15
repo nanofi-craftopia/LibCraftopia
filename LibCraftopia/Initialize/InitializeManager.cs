@@ -13,9 +13,9 @@ namespace LibCraftopia.Initialize
 {
     public class InitializeManager : SingletonMonoBehaviour<InitializeManager>
     {
-        public const string RegistryInit = "RegistryInit";
-        public const string ModInit = "ModInit";
-        public const string RegistryApply = "RegistryApply";
+        public const string PreInit = "PreInit";
+        public const string Init = "Init";
+        public const string PostInit = "PostInit";
 
         private readonly List<string> tags = new List<string>();
         public IReadOnlyCollection<string> Tags { get => tags; }
@@ -25,12 +25,12 @@ namespace LibCraftopia.Initialize
 
         protected override void OnUnityAwake()
         {
-            AddTagLast(RegistryInit);
-            AddTagLast(ModInit);
-            AddTagLast(RegistryApply);
+            AddTag(PreInit);
+            AddTag(Init);
+            AddTag(PostInit);
         }
 
-        public void AddTagLast(string tag)
+        public void AddTag(string tag)
         {
             tags.Add(tag);
             handlers.Add(tag, new List<IInitializeHandler>());

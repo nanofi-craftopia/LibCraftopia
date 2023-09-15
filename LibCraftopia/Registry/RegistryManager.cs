@@ -70,8 +70,8 @@ namespace LibCraftopia.Registry
 
         protected override void OnUnityAwake()
         {
-            InitializeManager.Inst.AddHandler(InitializeManager.RegistryInit, new RegistryInitHandler(this));
-            InitializeManager.Inst.AddHandler(InitializeManager.RegistryApply, new RegistryApplyHandler(this));
+            InitializeManager.Inst.AddHandler(InitializeManager.PreInit, new RegistryInitHandler(this));
+            InitializeManager.Inst.AddHandler(InitializeManager.PostInit, new RegistryApplyHandler(this));
         }
 
         public Registry<T> CreateRegistry<T>(IRegistryHandler<T> handler) where T : IRegistryEntry
