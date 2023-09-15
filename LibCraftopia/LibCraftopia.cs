@@ -29,6 +29,7 @@ namespace LibCraftopia
             this.gameObject.AddComponent<LocalizationHelper>();
             this.gameObject.AddComponent<InitializeManager>();
             this.gameObject.AddComponent<RegistryManager>();
+            this.gameObject.AddComponent<ItemAssetManager>();
         }
 
         private void Start()
