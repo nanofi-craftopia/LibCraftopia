@@ -75,6 +75,10 @@
   <Target Name="Asset" BeforeTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
     <Exec Command="&quot;$(UnityPath)&quot; -batchmode -quit -projectPath &quot;$(AssetDir)&quot; -executeMethod &quot;AssetBundleBuild.BuildAssetBundles&quot;" />
   </Target>
+  <Target Name="CleanPackage" BeforeTargets="Package">
+    <RemoveDir Directories="$(PackageDir)"/>
+    <Delete  Files="$(PackageDir).zip"/>
+  </Target>
   <Target Name="Package" AfterTargets="PostBuildEvent">
     <Message Text="Packaging $(MSBuildProjectName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PackagePluginDir)" />
